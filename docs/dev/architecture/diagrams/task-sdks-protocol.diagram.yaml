@@ -1,0 +1,27 @@
+type: sequence
+title: The task protocol between an Executor and a Task process
+participants:
+  - { id: exec, is: Executor }
+  - { id: proc, is: Proc }
+steps:
+  - { from: exec, to: proc, label: "start, with CZAR_INPUT_JSON, CZAR_TASK_NAME, CZAR_RUN_ID, CZAR_ATTEMPT, ..." }
+  - { from: proc, to: proc, label: SDK reads the input and the run details }
+  - loop: while working
+    steps:
+      - opt: progress
+        steps:
+          - { from: proc, to: exec, label: "stdout CZAR_PROGRESS:{\"current\", \"total\", \"message\"}", kind: return }
+      - opt: metric
+        steps:
+          - { from: proc, to: exec, label: "stdout CZAR_METRIC:{\"name\", \"value\", \"labels\"}", kind: return }
+      - { from: proc, to: exec, label: "other stdout and stderr lines: logs", kind: return }
+  - alt:
+      - when: result
+        steps:
+          - { from: proc, to: exec, label: "stdout CZAR_OUTPUT:{...}, exit 0", kind: return }
+      - when: hand off outside work
+        steps:
+          - { from: proc, to: exec, label: "stdout CZAR_OUTPUT:{\"deferred\": [...]}, exit 0", kind: return }
+      - when: error
+        steps:
+          - { from: proc, to: exec, label: "message on stderr, non-zero exit", kind: return }

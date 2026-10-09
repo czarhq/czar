@@ -1,0 +1,24 @@
+title: Task lifecycle
+direction: RIGHT
+nodes:
+  - { id: begin, shape: start, label: start }
+  - { id: pending, shape: state, label: pending }
+  - { id: paused, shape: state, label: paused }
+  - { id: dispatched, shape: state, label: dispatched }
+  - { id: running, shape: state, label: running }
+  - { id: success, shape: state, label: success, tone: good }
+  - { id: failed, shape: state, label: failed, tone: bad }
+  - { id: skipped, shape: state, label: skipped, tone: quiet }
+  - { id: cancelled, shape: state, label: cancelled, tone: quiet }
+edges:
+  - { from: begin, to: pending, label: Run starts }
+  - { from: pending, to: dispatched, label: dispatch }
+  - { from: dispatched, to: running, label: started }
+  - { from: running, to: success, label: succeeded }
+  - { from: running, to: failed, label: "failed, or timed out" }
+  - { from: running, to: pending, label: "failed, retries left" }
+  - { from: pending, to: paused, label: pause }
+  - { from: paused, to: pending, label: resume }
+  - { from: pending, to: skipped, label: "when false, or upstream skipped" }
+  - { from: pending, to: failed, label: upstream failed }
+  - { from: running, to: cancelled, label: "Run cancelled (also from pending, dispatched)" }

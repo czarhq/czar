@@ -1,0 +1,5 @@
+hooks:
+  notify_failure:
+    on: run.failed
+    executor: python
+    file: hooks_notify.py

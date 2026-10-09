@@ -1,0 +1,19 @@
+default:
+    @just --list
+
+# Start Metaflow UI (optional, requires service package support)
+server:
+    @echo "Metaflow UI is optional; see README for setup."
+
+# Run a flow
+run example:
+    uv run flows/{{example}}.py run
+
+# Run all flows
+run-all:
+    uv run flows/parallel_tasks.py run
+    uv run flows/data_pipeline.py run
+    uv run flows/conditional_branching.py run
+
+# Note: Metaflow UI requires deploying a separate service (metaflow-ui)
+# See: https://github.com/Netflix/metaflow-ui

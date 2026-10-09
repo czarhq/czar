@@ -1,0 +1,12 @@
+# Quick smoke test - verify basic functionality and measure throughput
+# Time-bounded: measures tasks/sec over a 10s window
+workflows: 5000
+tasks_per_workflow: 5
+duration: 0.05
+benchmark_duration_secs: 10
+
+scheduler:
+  poll_interval_secs: 0.5
+  max_tasks_per_batch: 200
+  max_concurrent_dispatches: 50
+  max_concurrent_status_checks: 100

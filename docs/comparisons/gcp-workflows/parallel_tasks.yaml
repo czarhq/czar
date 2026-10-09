@@ -1,0 +1,51 @@
+# GCP Workflows - Parallel Tasks Example
+# Demonstrates parallel execution with fan-in dependency
+# Note: Requires Cloud Run service (see service/ directory)
+
+main:
+  params: [args]
+  steps:
+    - init:
+        assign:
+          - service_url: https://workflow-service-PROJECT_ID.run.app
+    - parallel_fetch:
+        parallel:
+          shared: [service_url]
+          branches:
+            - fetch_users_branch:
+                steps:
+                  - fetch_users:
+                      call: http.post
+                      args:
+                        url: ${service_url + "/fetch_users"}
+                        auth:
+                          type: OIDC
+                      result: users_result
+            - fetch_orders_branch:
+                steps:
+                  - fetch_orders:
+                      call: http.post
+                      args:
+                        url: ${service_url + "/fetch_orders"}
+                        auth:
+                          type: OIDC
+                      result: orders_result
+            - fetch_products_branch:
+                steps:
+                  - fetch_products:
+                      call: http.post
+                      args:
+                        url: ${service_url + "/fetch_products"}
+                        auth:
+                          type: OIDC
+                      result: products_result
+    - combine_data:
+        call: http.post
+        args:
+          url: ${service_url + "/combine_data"}
+          auth:
+            type: OIDC
+          body:
+            users: ${users_result.body}
+            orders: ${orders_result.body}
+            products: ${products_result.body}

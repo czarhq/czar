@@ -1,0 +1,8 @@
+tasks:
+  extract:
+    executor: python
+    file: tasks/extract.py
+    env:
+      LOG_LEVEL: debug
+      API_URL: https://api.example.com
+      MAX_RETRIES: "3"

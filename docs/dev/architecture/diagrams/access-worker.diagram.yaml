@@ -1,0 +1,14 @@
+type: sequence
+title: Call a Worker
+participants:
+  - { id: exec, is: Executor }
+  - { id: worker, is: Worker }
+steps:
+  - { from: exec, to: worker, label: "POST /execute, Authorization: Bearer Worker token" }
+  - alt:
+      - when: "the Worker has no token, or it matches"
+        steps:
+          - { from: worker, to: exec, label: the result, kind: return }
+      - when: otherwise
+        steps:
+          - { from: worker, to: exec, label: "401, and the Task fails", kind: return }

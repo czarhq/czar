@@ -1,0 +1,3 @@
+# czar.yaml
+validation:
+  enabled: false

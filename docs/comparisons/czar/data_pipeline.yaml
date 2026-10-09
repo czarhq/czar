@@ -1,0 +1,40 @@
+name: data_pipeline
+
+types:
+  ExtractOutput:
+    records: [int]
+    source: str
+  TransformOutput:
+    records: [int]
+    source: str
+    transformed: bool
+
+tasks:
+  extract:
+    executor: python
+    file: data_pipeline.py
+    function: extract
+    output_type: types.ExtractOutput
+
+  transform:
+    executor: python
+    file: data_pipeline.py
+    function: transform
+    depends_on: [extract]
+    input_type:
+      data: types.ExtractOutput
+    output_type: types.TransformOutput
+    inputs:
+      data:
+        ref: tasks.extract.output
+
+  load:
+    executor: python
+    file: data_pipeline.py
+    function: load
+    depends_on: [transform]
+    input_type:
+      data: types.TransformOutput
+    inputs:
+      data:
+        ref: tasks.transform.output

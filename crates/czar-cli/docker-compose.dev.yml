@@ -1,0 +1,79 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: orchestrator
+    ports:
+      - "${CZAR_DEV_POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+
+  orchestrator:
+    build:
+      context: ../..
+      dockerfile: crates/czar-cli/Dockerfile.dev
+      args:
+        HOST_UID: "${HOST_UID:-1000}"
+        HOST_GID: "${HOST_GID:-1000}"
+    working_dir: /app
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/orchestrator
+      CZAR_BOOTSTRAP_WORKFLOW_DEFINITIONS: "1"
+      CZAR_WORKFLOW_DEFINITIONS_DIR: /app/examples/workflows
+      PYTHONPATH: /app/python-sdk
+      RUST_LOG: info
+      CARGO_TERM_COLOR: always
+      CARGO_WATCH_POLL: "true"
+      CZAR_DEV_NO_WATCH: "${CZAR_DEV_NO_WATCH:-}"
+      CARGO_HOME: /cargo
+      XDG_CACHE_HOME: /home/czar/.cache
+      # Open by default, so the ports below stay on 127.0.0.1. For a token,
+      # set CZAR_AUTH=token and CZAR_AUTH_TOKEN.
+      CZAR_AUTH: "${CZAR_AUTH:-none}"
+      CZAR_AUTH_TOKEN: "${CZAR_AUTH_TOKEN:-}"
+    ports:
+      - "${CZAR_DEV_BIND_ADDR:-127.0.0.1}:${CZAR_DEV_API_PORT:-4000}:4000"
+    volumes:
+      - ../..:/app
+      - cargo-registry:/cargo/registry
+      - cargo-git:/cargo/git
+      - cargo-target:/app/target
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ../czar-web-react
+      dockerfile: Dockerfile.dev
+      args:
+        HOST_UID: "${HOST_UID:-1000}"
+        HOST_GID: "${HOST_GID:-1000}"
+    working_dir: /app
+    environment:
+      CZAR_WEB_API_PROXY_TARGET: http://orchestrator:4000
+      CHOKIDAR_USEPOLLING: "true"
+      XDG_CACHE_HOME: /home/czar/.cache
+    command: pnpm run dev -- --host 0.0.0.0 --port 5175
+    ports:
+      - "${CZAR_DEV_BIND_ADDR:-127.0.0.1}:${CZAR_DEV_FRONTEND_PORT:-5175}:5175"
+    volumes:
+      - ../czar-web-react:/app
+      - frontend-node_modules:/app/node_modules
+    depends_on:
+      - orchestrator
+
+volumes:
+  postgres_data:
+  cargo-registry:
+  cargo-git:
+  cargo-target:
+  frontend-node_modules:

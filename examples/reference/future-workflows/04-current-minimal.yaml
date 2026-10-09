@@ -1,0 +1,19 @@
+name: my_etl
+
+tasks:
+  extract:
+    executor: python
+    file: tasks.py
+    function: extract
+
+  transform:
+    executor: python
+    file: tasks.py
+    function: transform
+    depends_on: [extract]
+
+  load:
+    executor: python
+    file: tasks.py
+    function: load
+    depends_on: [transform]

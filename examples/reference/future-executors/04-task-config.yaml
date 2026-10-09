@@ -1,0 +1,6 @@
+# sql/staging/users.yaml
+file: sql/staging/users.sql
+params:
+  days_back: 7
+  status: active
+  target_table: staging.users

@@ -1,0 +1,45 @@
+# Frontend Performance (Lighthouse)
+
+## Status
+
+- Audit run in this report: {{ checks_by_key.perf_frontend.display_status }} ([{{ checks_by_key.perf_frontend.log_path }}]({{ checks_by_key.perf_frontend.log_path }}))
+- Latest result source: `{{ frontend_perf.source_path }}`
+
+{% if frontend_perf.status == 'available' %}
+## Latest Results
+
+- Timestamp: {{ frontend_perf.timestamp }}
+- URL: `{{ frontend_perf.url }}`
+
+### Scores
+
+| Category | Score |
+|---|---:|
+{% for name, score in frontend_perf.scores.items() -%}
+| {{ name | replace('-', ' ') | title }} | {{ score }}/100 |
+{% endfor %}
+
+### Core Web Vitals
+
+| Metric | Value |
+|---|---:|
+| First Contentful Paint (FCP) | {{ frontend_perf.metrics.fcp_ms }} ms |
+| Largest Contentful Paint (LCP) | {{ frontend_perf.metrics.lcp_ms }} ms |
+| Total Blocking Time (TBT) | {{ frontend_perf.metrics.tbt_ms }} ms |
+| Cumulative Layout Shift (CLS) | {{ frontend_perf.metrics.cls }} |
+| Time to Interactive (TTI) | {{ frontend_perf.metrics.tti_ms }} ms |
+| Speed Index | {{ frontend_perf.metrics.speed_index_ms }} ms |
+
+{% elif frontend_perf.status == 'missing' %}
+No frontend performance results found. Run `just perf-frontend` to generate them.
+{% else %}
+Frontend performance results could not be loaded (status: {{ frontend_perf.status }}).
+{% endif %}
+
+{% if checks_by_key.perf_frontend.exit_code != 0 %}
+## Audit Failure Tail
+
+```text
+{{ log_tail['perf_frontend'] }}
+```
+{% endif %}

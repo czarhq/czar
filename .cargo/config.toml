@@ -1,0 +1,5 @@
+[registry]
+# Only resolve crate versions published at least 7 days ago. Cargo reads this
+# from 1.100 (stable on 2026-11-12); older cargo ignores it. Until then,
+# `just deps-update` and `just deps-update-crate <name>` apply the same rule.
+global-min-publish-age = "7 days"

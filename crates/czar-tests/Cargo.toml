@@ -1,0 +1,88 @@
+[package]
+name = "czar-tests"
+version.workspace = true
+edition.workspace = true
+publish = false
+
+[[test]]
+name = "compiled_workflow_test"
+path = "tests/core/compiled_workflow_test.rs"
+
+[[test]]
+name = "conditional_task_test"
+path = "tests/core/conditional_task_test.rs"
+
+[[test]]
+name = "dag_execution_test"
+path = "tests/core/dag_execution_test.rs"
+
+[[test]]
+name = "deferrables_test"
+path = "tests/core/deferrables_test.rs"
+
+[[test]]
+name = "pause_resume_test"
+path = "tests/core/pause_resume_test.rs"
+
+[[test]]
+name = "schedule_processor_test"
+path = "tests/core/schedule_processor_test.rs"
+
+[[test]]
+name = "scheduler_channel_behavior_test"
+path = "tests/core/scheduler_channel_behavior_test.rs"
+
+[[test]]
+name = "scheduler_failure_log_test"
+path = "tests/core/scheduler_failure_log_test.rs"
+
+[[test]]
+name = "scheduler_processing_behavior_test"
+path = "tests/core/scheduler_processing_behavior_test.rs"
+
+[[test]]
+name = "scheduler_retry_fallback_test"
+path = "tests/core/scheduler_retry_fallback_test.rs"
+
+[[test]]
+name = "scheduler_startup_test"
+path = "tests/core/scheduler_startup_test.rs"
+
+[[test]]
+name = "scheduler_upstream_output_error_test"
+path = "tests/core/scheduler_upstream_output_error_test.rs"
+
+[[test]]
+name = "sqlite_deferred_jobs_test"
+path = "tests/core/sqlite_deferred_jobs_test.rs"
+
+[[test]]
+name = "triggerer_behavior_test"
+path = "tests/core/triggerer_behavior_test.rs"
+
+[[test]]
+name = "type_extraction_test"
+path = "tests/core/type_extraction_test.rs"
+
+[dev-dependencies]
+czar-core = { workspace = true, features = ["sqlx"] }
+czar-store = { workspace = true, features = ["sqlite", "postgres"] }
+czar-executors = { workspace = true, features = ["process"] }
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+axum = { workspace = true }
+chrono = { workspace = true }
+indexmap = { workspace = true, features = ["serde"] }
+reqwest = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+sqlx = { workspace = true, features = ["runtime-tokio", "sqlite", "postgres", "uuid", "chrono", "json"] }
+tempfile = "3.24.0"
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "sync", "time"] }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+url = { workspace = true }
+uuid = { workspace = true, features = ["v4", "serde"] }
+
+[lints]
+workspace = true

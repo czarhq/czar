@@ -1,0 +1,20 @@
+type: sequence
+title: Check a request
+participants:
+  - { id: ui, is: UI }
+  - { id: tui, is: TUI }
+  - { id: api, is: API }
+steps:
+  - { from: ui, to: api, label: "GET /api/runs, with the session cookie and an Origin header" }
+  - alt:
+      - when: the request guard refuses the Host or Origin
+        steps:
+          - { from: api, to: ui, label: "403", kind: return }
+      - when: "mode none, or a matching bearer token or session cookie"
+        steps:
+          - { from: api, to: ui, label: "200", kind: return }
+      - when: otherwise
+        steps:
+          - { from: api, to: ui, label: "401, and the UI shows its login page again", kind: return }
+  - { from: tui, to: api, label: "GET /api/runs, Authorization: Bearer token, no Origin" }
+  - { from: api, to: tui, label: "200", kind: return }

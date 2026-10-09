@@ -1,0 +1,44 @@
+# Examples
+
+| Check | Status | Exit | Duration | Log |
+|---|---|---:|---:|---|
+| `{{ checks_by_key.examples_system.commands[0] }}` | {{ checks_by_key.examples_system.display_status }} | {{ checks_by_key.examples_system.exit_code }} | {{ checks_by_key.examples_system.duration_s }}s | [{{ checks_by_key.examples_system.log_path }}]({{ checks_by_key.examples_system.log_path }}) |
+
+## Summary
+
+- Total entries: {{ examples.total }}
+- PASS: {{ examples.status_counts.get('PASS', 0) }}
+- FAIL: {{ examples.status_counts.get('FAIL', 0) }}
+- TIMEOUT: {{ examples.status_counts.get('TIMEOUT', 0) }}
+- SKIP: {{ examples.status_counts.get('SKIP', 0) }}
+- Results JSON: [artifacts/examples-check.json](artifacts/examples-check.json)
+- Validation JSON: [artifacts/examples-validate.json](artifacts/examples-validate.json)
+- Summary JSON: [artifacts/examples-summary.json](artifacts/examples-summary.json)
+
+## Kind Breakdown
+
+{% for key, value in examples.kind_counts.items() -%}
+- {{ key }}: {{ value }}
+{% endfor %}
+
+## Policy Breakdown
+
+{% for key, value in examples.policy_counts.items() -%}
+- {{ key }}: {{ value }}
+{% endfor %}
+
+## All Runnable Examples
+
+| Example | Duration | Status | Exit | Kind | Policy |
+|---|---:|---|---:|---|---|
+{% for row in examples.rows -%}
+| `{{ row.example }}` | {{ row.duration_s }}s | {{ row.display_status }} | {{ row.exit_code }} | {{ row.kind }} | {{ row.policy }} |
+{% endfor %}
+
+## Slowest Entries
+
+| Example | Duration | Status | Kind | Policy |
+|---|---:|---|---|---|
+{% for row in examples.slowest -%}
+| `{{ row.example }}` | {{ row.duration_s }}s | {{ row.display_status }} | {{ row.kind }} | {{ row.policy }} |
+{% endfor %}

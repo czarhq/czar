@@ -1,0 +1,1 @@
+dbt.<folder>.<model_name>

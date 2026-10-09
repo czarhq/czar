@@ -1,0 +1,25 @@
+title: The flows and how they nest
+direction: RIGHT
+nodes:
+  - { id: life, label: Life of a run }
+  - { id: define, in: life, label: 1. Define a workflow, icon: "lucide:file-cog", link: ../flows/define.md }
+  - { id: start, in: life, label: 2. Start a run, icon: "lucide:play", link: ../flows/start.md }
+  - { id: schedule, in: life, label: "3. Schedule: the tick", icon: "lucide:workflow", link: ../flows/schedule.md }
+  - { id: execute, in: life, label: 4. Execute a task, icon: "lucide:cog", link: ../flows/execute.md }
+  - { id: how, label: How a Task runs }
+  - { id: local, in: how, label: In the server's process, icon: "lucide:cpu", link: ../flows/execute-local.md }
+  - { id: worker, in: how, label: On a remote Worker, icon: "lucide:container", link: ../flows/execute-worker.md }
+  - { id: cloud, in: how, label: As a Cloud Run job, icon: "gcp:cloud-run", link: ../flows/execute-cloud-run.md }
+  - { id: deferred, in: how, label: Waiting on outside work, icon: "lucide:hourglass", link: ../flows/deferred.md }
+  - { id: wrong, label: When things go wrong }
+  - { id: failures, in: wrong, label: "Failures, retries,\ntimeouts, restarts", icon: "lucide:triangle-alert", link: ../flows/failures.md }
+  - { id: anytime, label: "Any time, from the UI, TUI or CLI" }
+  - { id: observe, in: anytime, label: Observe runs, icon: "lucide:eye", link: ../flows/observe.md }
+  - { id: control, in: anytime, label: "Cancel, pause,\nresume, retry", icon: "lucide:sliders-horizontal", link: ../flows/control.md }
+  - { id: access, label: "Access: who may call\nthe API and Workers", icon: "lucide:key-round", link: ../flows/access.md }
+edges:
+  - { from: define, to: start }
+  - { from: start, to: schedule }
+  - { from: schedule, to: execute, label: "ready Task, report", both: true }
+  - { from: execute, to: how }
+  - { from: schedule, to: failures }

@@ -1,0 +1,11 @@
+tasks:
+  discover:
+    executor: python
+    file: tasks/discover.py
+
+  process:
+    executor: python
+    file: tasks/process.py
+    depends_on: [discover]
+    env:
+      DATA_PATH: "{{ discover.output_path }}"

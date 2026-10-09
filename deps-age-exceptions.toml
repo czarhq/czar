@@ -1,0 +1,10 @@
+# Crate versions that may be younger than the 7-day rule checked by
+# scripts/deps-age-check.py, each with its reason (usually a security fix that
+# can't wait). An entry covers the crates whose names match one of `crates`
+# (shell-style patterns) until the date `until`; by then they are old enough
+# anyway, so delete the entry. See docs/dev/supply-chain.md.
+
+[[exception]]
+reason = "RUSTSEC-2026-0327 (critical, wasmtime component model): fixed in wasmtime 48.0.4 and 48.0.5, both published 2026-10-02"
+crates = ["wasmtime", "wasmtime-*", "cranelift-*", "pulley-*", "wasm-encoder", "wasmparser", "wasmprinter"]
+until = "2026-10-10"

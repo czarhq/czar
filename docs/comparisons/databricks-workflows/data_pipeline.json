@@ -1,0 +1,44 @@
+{
+  "name": "tier2_data_passing",
+  "tasks": [
+    {
+      "task_key": "extract",
+      "notebook_task": {
+        "notebook_path": "/Workspace/notebooks/extract",
+        "source": "WORKSPACE",
+        "base_parameters": {}
+      }
+    },
+    {
+      "task_key": "transform",
+      "depends_on": [
+        {"task_key": "extract"}
+      ],
+      "notebook_task": {
+        "notebook_path": "/Workspace/notebooks/transform",
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "input_data": "{{tasks.extract.values.output_data}}"
+        }
+      }
+    },
+    {
+      "task_key": "load",
+      "depends_on": [
+        {"task_key": "transform"}
+      ],
+      "notebook_task": {
+        "notebook_path": "/Workspace/notebooks/load",
+        "source": "WORKSPACE",
+        "base_parameters": {
+          "transformed_data": "{{tasks.transform.values.output_data}}"
+        }
+      }
+    }
+  ],
+  "comments": {
+    "extract_notebook": "dbutils.notebook.exit(json.dumps({'records': [1,2,3,4,5], 'source': 'api'}))",
+    "transform_notebook": "data = json.loads(dbutils.widgets.get('input_data')); transformed = [x*2 for x in data['records']]; dbutils.notebook.exit(json.dumps({'records': transformed, 'source': data['source']}))",
+    "load_notebook": "data = json.loads(dbutils.widgets.get('transformed_data')); print(f'Loaded {len(data[\"records\"])} records')"
+  }
+}

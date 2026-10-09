@@ -1,0 +1,5 @@
+tasks:
+  slow_task:
+    executor: python
+    file: tasks/slow.py
+    timeout: 7200  # 2 hours

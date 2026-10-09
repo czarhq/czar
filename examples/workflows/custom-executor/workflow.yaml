@@ -1,0 +1,47 @@
+name: custom_executor_demo
+
+tasks:
+  prepare_db:
+    executor: python
+    file: tasks.py
+    function: prepare_db
+    output_type:
+      db_path: str
+
+  query_top_customers:
+    executor: sqlite_query
+    config_file: queries/top_customers.json
+    depends_on: [prepare_db]
+    input_type:
+      db_path: str
+      min_total: int
+    inputs:
+      db_path:
+        ref: tasks.prepare_db.output.db_path
+      min_total:
+        const: 100
+    output_type:
+      rows:
+        - customer: str
+          total: float
+      row_count: int
+      sql: str
+
+  summarize:
+    executor: python
+    file: tasks.py
+    function: summarize
+    depends_on: [query_top_customers]
+    input_type:
+      results:
+        rows:
+          - customer: str
+            total: float
+        row_count: int
+        sql: str
+    inputs:
+      results:
+        ref: tasks.query_top_customers.output
+    output_type:
+      top_customer: str
+      row_count: int

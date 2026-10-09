@@ -1,0 +1,15 @@
+[project]
+name = "czar-deferrables-example"
+version = "0.1.0"
+description = "Example workflow demonstrating deferrables with Czar"
+requires-python = ">=3.12"
+dependencies = [
+    "czar",
+]
+
+[tool.uv]
+package = false
+exclude-newer = "7 days"
+
+[tool.uv.sources]
+czar = { path = "../../../python-sdk", editable = true }

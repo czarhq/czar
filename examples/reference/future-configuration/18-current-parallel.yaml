@@ -1,0 +1,6 @@
+tasks:
+  process_item:
+    executor: python
+    file: tasks_process.py
+    foreach: discover.items
+    concurrency: 8

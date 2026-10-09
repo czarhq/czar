@@ -1,0 +1,14 @@
+# ~2ms DB round-trip latency.
+# Representative of: AWS EC2+RDS cross-AZ, Azure AKS+Postgres same-region.
+# Time-bounded: measures tasks/sec over a 10s window
+workflows: 500
+tasks_per_workflow: 5
+duration: 0.05
+benchmark_duration_secs: 10
+db_extra_latency_ms: 2
+
+scheduler:
+  poll_interval_secs: 1
+  max_tasks_per_batch: 500
+  max_concurrent_dispatches: 100
+  max_concurrent_status_checks: 200

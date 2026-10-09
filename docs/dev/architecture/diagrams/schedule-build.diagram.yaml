@@ -1,0 +1,19 @@
+type: sequence
+title: Building the Tasks of pending Runs
+participants:
+  - { id: sched, is: Scheduler }
+  - { id: store, is: Store }
+  - { id: exec, is: Executor }
+steps:
+  - { from: sched, to: store, label: "pending Runs, their Workflows and Snapshots" }
+  - loop: each pending Run
+    steps:
+      - alt:
+          - when: its Tasks can be built
+            steps:
+              - { from: sched, to: store, label: "insert its Tasks, pending, only the selected ones" }
+              - { from: sched, to: store, label: Run running }
+              - { from: sched, to: exec, label: "run.start Hooks, in the background" }
+          - when: "no Snapshot, unknown selected tasks, nothing to run"
+            steps:
+              - { from: sched, to: store, label: "Run failed, with the reason" }

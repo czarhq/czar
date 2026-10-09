@@ -1,0 +1,111 @@
+[workspace]
+members = [
+    "crates/czar",
+    "crates/czar-cli",
+    "crates/czar-web",
+    "crates/czar-core",
+    "crates/czar-gcp",
+    "crates/czar-store",
+    "crates/czar-store-file",
+    "crates/czar-store-sqlite",
+    "crates/czar-store-postgres",
+    "crates/czar-store-d1",
+    "crates/czar-executors",
+    "crates/czar-macros",
+    "crates/czar-worker",
+    "crates/czar-tui",
+    "crates/czar-tests",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0 OR MIT"
+repository = "https://github.com/czarhq/czar"
+homepage = "https://github.com/czarhq/czar"
+documentation = "https://github.com/czarhq/czar/tree/main/docs"
+rust-version = "1.95"
+authors = ["Czar contributors"]
+
+[workspace.dependencies]
+czar-core = { package = "czar-core", version = "0.1.0", path = "crates/czar-core" }
+czar-gcp = { package = "czar-gcp", version = "0.1.0", path = "crates/czar-gcp" }
+czar-store = { package = "czar-store", version = "0.1.0", path = "crates/czar-store" }
+czar-store-file = { package = "czar-store-file", version = "0.1.0", path = "crates/czar-store-file" }
+czar-store-sqlite = { package = "czar-store-sqlite", version = "0.1.0", path = "crates/czar-store-sqlite" }
+czar-store-postgres = { package = "czar-store-postgres", version = "0.1.0", path = "crates/czar-store-postgres" }
+czar-store-d1 = { package = "czar-store-d1", version = "0.1.0", path = "crates/czar-store-d1" }
+czar-executors = { package = "czar-executors", version = "0.1.0", path = "crates/czar-executors", default-features = false }
+czar-web = { package = "czar-web", version = "0.1.0", path = "crates/czar-web" }
+czar-macros = { package = "czar-macros", version = "0.1.0", path = "crates/czar-macros" }
+czar = { version = "0.1.0", path = "crates/czar" }
+czar-worker = { package = "czar-worker", version = "0.1.0", path = "crates/czar-worker" }
+czar-cli = { package = "czar-cli", version = "0.1.0", path = "crates/czar-cli" }
+czar-tui = { package = "czar-tui", version = "0.1.0", path = "crates/czar-tui" }
+anyhow = "1.0.101"
+axum = { version = "0.8", default-features = false, features = [
+    "http1",
+    "json",
+    "tokio",
+    "query",
+    "ws",
+    "original-uri",
+] }
+async-trait = "0.1"
+chrono = { version = "0.4.45", default-features = false, features = [
+    "clock",
+    "serde",
+] }
+clap = { version = "4.5.57", features = ["derive"] }
+fs2 = "0.4"
+futures = "0.3"
+hex = "0.4"
+gcp_auth = "0.12"
+indexmap = { version = "2", features = ["serde"] }
+reqwest = { version = "0.13", features = ["json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9.34-deprecated"
+sha2 = "0.11"
+subtle = "2.6"
+sqlx = { version = "0.9", default-features = false }
+sysinfo = "0.39.6"
+thiserror = "2"
+tokio = { version = "1", features = [
+    "macros",
+    "rt-multi-thread",
+    "process",
+    "fs",
+    "time",
+    "sync",
+    "net",
+] }
+tower-http = { version = "0.7", default-features = false, features = ["trace"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
+tower = "0.5"
+uuid = { version = "1.20.0", features = ["v4"] }
+rustls = { version = "0.23", default-features = false, features = ["std", "aws_lc_rs"] }
+url = "2.5"
+base64 = "0.23"
+croner = "4.0.0"
+
+[workspace.lints.clippy]
+too_many_arguments = "allow"
+
+[patch.crates-io]
+czar-core = { path = "crates/czar-core" }
+czar-gcp = { path = "crates/czar-gcp" }
+czar-store = { path = "crates/czar-store" }
+czar-store-file = { path = "crates/czar-store-file" }
+czar-store-sqlite = { path = "crates/czar-store-sqlite" }
+czar-store-postgres = { path = "crates/czar-store-postgres" }
+czar-store-d1 = { path = "crates/czar-store-d1" }
+czar-executors = { path = "crates/czar-executors" }
+czar-web = { path = "crates/czar-web" }
+czar-macros = { path = "crates/czar-macros" }
+czar = { path = "crates/czar" }
+czar-worker = { path = "crates/czar-worker" }
+czar-cli = { path = "crates/czar-cli" }
+czar-tui = { path = "crates/czar-tui" }

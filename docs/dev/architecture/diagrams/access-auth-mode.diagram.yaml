@@ -1,0 +1,33 @@
+title: Choose the auth mode at startup
+direction: DOWN
+nodes:
+  - { id: start, label: "czar serve, czar dev or czar-web starts", detail: "--auth / CZAR_AUTH,\n--auth-token / CZAR_AUTH_TOKEN", icon: "lucide:power" }
+  - { id: mode, shape: decision, label: "--auth?" }
+  - { id: token, shape: decision, label: "a token\ngiven?" }
+  - { id: tok1, shape: state, label: mode token, tone: good }
+  - { id: lb, shape: decision, label: "listening on\nloopback?" }
+  - { id: none1, shape: state, label: mode none }
+  - { id: refuse1, shape: state, label: refuse to start, tone: bad }
+  - { id: m_none, shape: decision, label: "a token\ngiven too?" }
+  - { id: refuse2, shape: state, label: refuse to start, tone: bad }
+  - { id: pub, shape: decision, label: "non-loopback\naddress?" }
+  - { id: warn, shape: state, label: "mode none,\nwith a warning", tone: accent }
+  - { id: none2, shape: state, label: mode none }
+  - { id: m_tok, shape: decision, label: "a token\ngiven?" }
+  - { id: tok2, shape: state, label: mode token, tone: good }
+  - { id: refuse3, shape: state, label: refuse to start, tone: bad }
+edges:
+  - { from: start, to: mode }
+  - { from: mode, to: token, label: not given }
+  - { from: token, to: lb, label: "no", main: true }
+  - { from: token, to: tok1, label: "yes" }
+  - { from: lb, to: none1, label: "yes", main: true }
+  - { from: lb, to: refuse1, label: "no" }
+  - { from: mode, to: m_none, label: none }
+  - { from: m_none, to: pub, label: "no", main: true }
+  - { from: m_none, to: refuse2, label: "yes" }
+  - { from: pub, to: warn, label: "yes", main: true }
+  - { from: pub, to: none2, label: "no" }
+  - { from: mode, to: m_tok, label: token }
+  - { from: m_tok, to: tok2, label: "yes", main: true }
+  - { from: m_tok, to: refuse3, label: "no" }

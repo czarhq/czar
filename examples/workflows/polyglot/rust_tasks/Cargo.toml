@@ -1,0 +1,33 @@
+[package]
+name = "polyglot-rust-tasks"
+version = "0.1.0"
+edition = "2021"
+
+# Prevent this from being part of the main workspace
+[workspace]
+
+[lib]
+name = "polyglot_rust_lib"
+path = "src/lib.rs"
+crate-type = ["cdylib"]  # For library executor
+
+[[bin]]
+name = "process_raw"
+path = "src/bin/process_raw.rs"
+
+[[bin]]
+name = "process_sdk"
+path = "src/bin/process_sdk.rs"
+
+[[bin]]
+name = "process_macro"
+path = "src/bin/process_macro.rs"
+
+[[bin]]
+name = "wasm_cli"
+path = "src/bin/wasm_cli.rs"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+czar = { path = "../../../../crates/czar" }

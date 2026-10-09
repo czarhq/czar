@@ -1,0 +1,28 @@
+type: sequence
+title: Running a Task on a Worker
+participants:
+  - { id: sched, is: Scheduler }
+  - { id: exec, is: Executor }
+  - { id: worker, is: Worker }
+  - { id: proc, is: Proc }
+steps:
+  - { note: "the Task's Workflow carries a Worker URL, so the Worker executor is chosen", over: [sched, exec] }
+  - { from: sched, to: exec, label: "execute(Task id, job name, params)" }
+  - { from: exec, to: worker, label: "POST /execute {task_id, task_name, executor_type: process, params}, bearer token if known" }
+  - alt:
+      - when: "accepted, and success within 30 s"
+        steps:
+          - { from: worker, to: proc, label: "spawn with the process executor, in the Worker's working dir" }
+          - { from: proc, to: worker, label: "CZAR_OUTPUT line, exit 0", kind: return }
+          - { from: worker, to: exec, label: "200 {status: success, output, deferred}", kind: return }
+          - { from: exec, to: sched, label: "success, output with deferred merged back", kind: async }
+          - { from: exec, to: sched, label: execution name, kind: return }
+      - when: "accepted, but failed, no output, or nothing within 30 s"
+        steps:
+          - { from: worker, to: exec, label: "200 {status: failed, error}", kind: return }
+          - { from: exec, to: sched, label: failed, kind: async }
+          - { from: exec, to: sched, label: error, kind: return }
+      - when: "401, Worker down, non-2xx, or no answer in 300 s"
+        steps:
+          - { from: exec, to: sched, label: error, kind: return }
+  - { note: logs and progress stay on the Worker, over: [worker, proc] }

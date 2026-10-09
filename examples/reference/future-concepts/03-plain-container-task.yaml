@@ -1,0 +1,4 @@
+tasks:
+  run_spark:
+    image: apache/spark:3.5.0
+    command: ["spark-submit", "/app/job.jar"]

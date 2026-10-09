@@ -1,0 +1,8 @@
+# czar.yaml
+executors:
+  bigquery:
+    type: executors.bigquery:BigQueryExecutor
+    config:
+      project: my-gcp-project
+      location: US
+      cost_per_tb: 5.0

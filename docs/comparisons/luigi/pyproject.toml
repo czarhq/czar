@@ -1,0 +1,19 @@
+[project]
+name = "luigi-examples"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "luigi>=3.6.0",
+    "setuptools>=80.9.0",
+    "sqlalchemy<2.0",
+]
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.408",
+    "ruff>=0.14.11",
+]
+
+[tool.uv]
+exclude-newer = "7 days"

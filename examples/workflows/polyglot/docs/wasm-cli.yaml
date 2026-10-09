@@ -1,0 +1,5 @@
+rust_wasm_cli:
+  executor: wasm
+  # CLI / WASI-style wasm: spawned through an external runtime such as `wasmtime run`.
+  file: rust_tasks/target/wasm32-wasip1/${{ vars.BUILD_PROFILE }}/wasm_cli.wasm
+  wasm_mode: cli

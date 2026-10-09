@@ -1,0 +1,131 @@
+# Justfile for orchestration framework comparisons
+
+PYTHON_PROJECTS := "airflow prefect dagster luigi mage kedro metaflow"
+
+default:
+    @just --list
+
+# === Running Examples ===
+
+# Run a specific example in a framework
+run framework example:
+    cd {{framework}} && just run {{example}}
+
+# Run all examples in a framework
+run-all framework:
+    cd {{framework}} && just run-all
+
+# Start server for a framework
+server framework:
+    cd {{framework}} && just server
+
+# List all frameworks managed by this justfile
+list:
+    @echo "Python projects (lint/typecheck): {{PYTHON_PROJECTS}}"
+    @echo "Other: kestra"
+
+# === Linting & Type Checking ===
+
+# Run all checks on all projects
+check-all: lint-all typecheck-all
+
+# Run linting on all Python projects
+lint-all:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    base_dir="$(pwd)"
+    for project in {{PYTHON_PROJECTS}}; do
+        echo "=== Linting $project ==="
+        cd "$base_dir/$project"
+        # Find the subdirectory (dags, flows, jobs, tasks, pipelines)
+        if [ -d "dags" ]; then
+            uv run ruff check dags/
+        elif [ -d "flows" ]; then
+            uv run ruff check flows/
+        elif [ -d "jobs" ]; then
+            uv run ruff check jobs/
+        elif [ -d "tasks" ]; then
+            uv run ruff check tasks/
+        elif [ -d "pipelines" ]; then
+            uv run ruff check pipelines/
+        fi
+    done
+    cd "$base_dir"
+    echo "✓ All projects passed linting"
+
+# Run type checking on all Python projects
+typecheck-all:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    base_dir="$(pwd)"
+    for project in {{PYTHON_PROJECTS}}; do
+        echo "=== Type checking $project ==="
+        cd "$base_dir/$project"
+        # Find the subdirectory (dags, flows, jobs, tasks, pipelines)
+        if [ -d "dags" ]; then
+            uv run pyright dags/
+        elif [ -d "flows" ]; then
+            uv run pyright flows/
+        elif [ -d "jobs" ]; then
+            uv run pyright jobs/
+        elif [ -d "tasks" ]; then
+            uv run pyright tasks/
+        elif [ -d "pipelines" ]; then
+            uv run pyright pipelines/
+        fi
+    done
+    cd "$base_dir"
+    echo "✓ All projects passed type checking"
+
+# Auto-fix linting issues in all projects
+fix-all:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    base_dir="$(pwd)"
+    for project in {{PYTHON_PROJECTS}}; do
+        echo "=== Fixing $project ==="
+        cd "$base_dir/$project"
+        for dir in dags flows jobs tasks pipelines; do
+            if [ -d "$dir" ]; then
+                uv run ruff check --fix "$dir/"
+                uv run ruff format "$dir/"
+            fi
+        done
+    done
+    cd "$base_dir"
+    echo "✓ All projects fixed"
+
+# === Setup & Maintenance ===
+
+# Install dependencies for all Python projects
+install-all:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    base_dir="$(pwd)"
+    for project in {{PYTHON_PROJECTS}}; do
+        echo "=== Installing dependencies for $project ==="
+        cd "$base_dir/$project" && uv sync
+    done
+    cd "$base_dir"
+    echo "✓ All dependencies installed"
+
+# Clean all virtual environments
+clean-all:
+    #!/usr/bin/env bash
+    for project in {{PYTHON_PROJECTS}}; do
+        echo "=== Cleaning $project ==="
+        rm -rf "$project/.venv"
+    done
+    echo "✓ All virtual environments cleaned"
+
+# Sync pyright and ruff configs from airflow to all other projects
+sync-configs:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Syncing pyrightconfig.json and ruff.toml from airflow/ to all projects..."
+    for project in prefect dagster luigi mage kedro metaflow; do
+        cp airflow/pyrightconfig.json "$project/"
+        cp airflow/ruff.toml "$project/"
+        echo "  ✓ Synced to $project"
+    done
+    echo "✓ All configs synced"

@@ -1,0 +1,13 @@
+type: sequence
+title: Check and compile
+participants:
+  - { id: compiler, is: Compiler }
+steps:
+  - opt: the workflow has dbt imports
+    steps:
+      - { from: compiler, to: compiler, label: "dbt parse if there is no manifest, then expand into tasks, groups, flows" }
+  - { from: compiler, to: compiler, label: "validate, resolve all tasks, interpolate vars" }
+  - opt: python tasks with a file
+    steps:
+      - { from: compiler, to: compiler, label: inspect the function signature with uv run python }
+  - { from: compiler, to: compiler, label: compile every task into a Workflow task row }

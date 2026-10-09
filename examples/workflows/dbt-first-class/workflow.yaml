@@ -1,0 +1,23 @@
+name: dbt_first_class
+
+imports:
+  - dbt: transform
+    label: analytics
+    profiles_dir: profiles
+    profile: czar_example
+    target: dev
+    depends_on: [prepare_seed]
+
+tasks:
+  prepare_seed:
+    executor: python
+    file: tasks.py
+    function: prepare_seed
+
+  publish_report:
+    executor: python
+    file: tasks.py
+    function: publish_report
+    depends_on:
+      - dbt.analytics.marts.daily_revenue
+      - dbt.analytics.test.assert_daily_revenue

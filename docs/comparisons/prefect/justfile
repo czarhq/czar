@@ -1,0 +1,16 @@
+default:
+    @just --list
+
+# Start Prefect server (optional - flows work without it)
+server:
+    uv run prefect server start
+
+# Run a flow (automatically orchestrated by Prefect)
+run example:
+    uv run flows/{{example}}.py
+
+# Run all flows
+run-all:
+    uv run flows/parallel_tasks.py
+    uv run flows/data_pipeline.py
+    uv run flows/conditional_branching.py

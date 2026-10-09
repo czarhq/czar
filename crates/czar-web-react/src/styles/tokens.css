@@ -1,0 +1,232 @@
+/* =============================================================
+   DESIGN TOKENS
+   Single source of truth for all visual design decisions.
+   Dark mode (default) defined in :root.
+   Light mode overrides in html[data-theme="light"].
+   ============================================================= */
+
+:root {
+  /* ---- Base surfaces and text (kept in base.css for the theme switcher) ---- */
+  /* --bg, --bg-2, --panel, --panel-2, --border, --text, --muted,            */
+  /* --accent, --accent-2, --accent-3, --danger, --shadow, --scrollbar-*     */
+
+  /* ---- Body background glows ---- */
+  --body-glow-cyan: rgba(110, 231, 255, 0.16);
+  --body-glow-warm: rgba(255, 184, 77, 0.16);
+  --grid-dot-color: rgba(255, 255, 255, 0.04);
+
+  /* ---- Status colors (for dots, bars, graph node borders) ---- */
+  --status-ok:      #a7f3d0;
+  --status-pending: #fbd38d;
+  --status-fail:    #ff6b6b;
+  --status-skip:    #f9a8d4;
+  --status-none:    rgba(154, 163, 178, 0.45);
+
+  /* ---- Status badge styles ---- */
+  --badge-ok-bg:          rgba(25, 89, 56, 0.45);
+  --badge-ok-border:      rgba(25, 89, 56, 0.7);
+  --badge-ok-text:        #a7f3d0;
+  --badge-pending-bg:     rgba(82, 72, 26, 0.45);
+  --badge-pending-border: rgba(82, 72, 26, 0.7);
+  --badge-pending-text:   #fbd38d;
+  --badge-fail-bg:        rgba(92, 33, 39, 0.55);
+  --badge-fail-border:    rgba(92, 33, 39, 0.7);
+  --badge-fail-text:      #fecaca;
+  --badge-skip-bg:        rgba(88, 28, 55, 0.45);
+  --badge-skip-border:    rgba(88, 28, 55, 0.7);
+  --badge-skip-text:      #f9a8d4;
+
+  /* ---- Graph node styles ---- */
+  --node-ok-bg:         #12331b;
+  --node-ok-color:      #a7f3d0;
+  --node-pending-bg:    #1b1f2c;
+  --node-pending-color: #fbd38d;
+  --node-fail-bg:       #33181c;
+  --node-fail-color:    #ff6b6b;
+  --node-skip-bg:       #2d1a24;
+  --node-skip-color:    #f9a8d4;
+  --node-idle-bg:       #1b1f2c;
+  --node-idle-color:    #e8ecf2;
+  --node-idle-border:   #6ee7ff;
+
+  /* ---- Semi-transparent surface overlays ---- */
+  --surface-overlay-deep:   rgba(10, 12, 20, 0.98);   /* tooltips, popovers */
+  --surface-overlay-strong: rgba(10, 12, 20, 0.95);   /* sticky columns */
+  --surface-overlay-mid:    rgba(12, 15, 25, 0.70);   /* items, cards */
+  --surface-overlay-soft:   rgba(12, 15, 25, 0.60);   /* log blocks */
+  --surface-overlay-faint:  rgba(12, 15, 25, 0.50);   /* grid bg, modals */
+  --surface-overlay-hover:  rgba(20, 25, 38, 0.95);   /* hover on sticky */
+  --surface-punch:          rgba(15, 18, 28, 0.85);   /* dot border punch-out */
+
+  /* ---- Interactive states (based on --accent-2 / cyan) ---- */
+  --interactive-bg-glow:      rgba(110, 231, 255, 0.04);
+  --interactive-bg-hover:     rgba(110, 231, 255, 0.08);
+  --interactive-bg-active:    rgba(110, 231, 255, 0.12);
+  --interactive-bg-tint:      rgba(110, 231, 255, 0.15);
+  --interactive-border-soft:  rgba(110, 231, 255, 0.25);
+  --interactive-border-hover: rgba(110, 231, 255, 0.35);
+  --interactive-border:       rgba(110, 231, 255, 0.45);
+
+  /* ---- Warm accent states (based on --accent / orange-gold) ---- */
+  --warm-bg-hover:    rgba(255, 184, 77, 0.08);
+  --warm-bg-active:   rgba(255, 184, 77, 0.15);
+  --warm-border:      rgba(255, 184, 77, 0.45);
+  --accent-shadow:    rgba(255, 184, 77, 0.20);
+
+  /* ---- Danger variants ---- */
+  --danger-border:    rgba(255, 107, 107, 0.35);
+  --danger-bg-soft:   rgba(58, 24, 30, 0.30);
+  --danger-bg-strong: rgba(58, 24, 30, 0.50);
+
+  /* ---- Structural / chrome ---- */
+  --header-bg:   rgba(10, 12, 20, 0.75);
+  --overlay-bg:  rgba(6, 9, 16, 0.70);
+  --code-bg:     rgba(15, 18, 30, 0.70);
+  --code-border: rgba(35, 42, 63, 0.60);
+  --code-color:  #c8d1de;
+  --on-accent:   #20150a;  /* text on primary (accent) buttons */
+
+  /* ---- Gantt chart ---- */
+  --gantt-queued-bg:      rgba(102, 126, 234, 0.65);
+  --gantt-scheduled-bg:   rgba(251, 191, 36, 0.75);
+  --gantt-running-bg:     rgba(52, 211, 153, 0.70);
+  --gantt-selected-bg:    rgba(110, 231, 255, 0.06);
+  --gantt-track-bg:       rgba(10, 14, 22, 0.85);
+  --gantt-track-scale-bg: rgba(18, 22, 34, 0.85);
+  --gantt-row-system-bg:  rgba(15, 18, 28, 0.55);
+  --gantt-row-scale-bg:   rgba(15, 18, 28, 0.70);
+  --gantt-tooltip-bg:     rgba(10, 12, 20, 0.96);
+  --gantt-tick-color:     rgba(148, 163, 184, 0.35);
+  --gantt-tick-label:     #b8c2d4;
+  --gantt-marker-color:   rgba(226, 232, 240, 0.70);
+  --gantt-marker-dot:     #dbe5f5;
+
+  /* ---- Progress bars ---- */
+  --progress-gradient:     linear-gradient(90deg, #6ee7ff 0%, #ffb84d 100%);
+  --progress-track-bg:     rgba(11, 16, 28, 0.88);
+  --progress-track-border: rgba(110, 231, 255, 0.42);
+
+  /* ---- Stat cards ---- */
+  --stat-ok-border:     rgba(167, 243, 208, 0.40);
+  --stat-ok-bg:         rgba(167, 243, 208, 0.06);
+  --stat-warn-border:   rgba(255, 184, 77, 0.40);
+  --stat-warn-bg:       rgba(255, 184, 77, 0.06);
+  --stat-danger-border: rgba(255, 107, 107, 0.40);
+  --stat-danger-bg:     rgba(255, 107, 107, 0.06);
+
+  /* ---- Border radius scale ---- */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   10px;
+  --radius-xl:   12px;
+  --radius-full: 999px;
+}
+
+/* =============================================================
+   LIGHT MODE TOKEN OVERRIDES
+   ============================================================= */
+html[data-theme="light"] {
+  /* Body glows */
+  --body-glow-cyan: rgba(6, 148, 184, 0.08);
+  --body-glow-warm: rgba(212, 130, 10, 0.08);
+  --grid-dot-color: rgba(0, 0, 0, 0.07);
+
+  /* Status colors (darker/richer for light backgrounds) */
+  --status-ok:      #16a34a;
+  --status-pending: #ca8a04;
+  --status-fail:    #dc2626;
+  --status-skip:    #be185d;
+  --status-none:    rgba(100, 116, 139, 0.40);
+
+  /* Status badges */
+  --badge-ok-bg:          rgba(209, 250, 229, 0.80);
+  --badge-ok-border:      rgba(16, 185, 129, 0.40);
+  --badge-ok-text:        #065f46;
+  --badge-pending-bg:     rgba(254, 243, 199, 0.80);
+  --badge-pending-border: rgba(245, 158, 11, 0.40);
+  --badge-pending-text:   #92400e;
+  --badge-fail-bg:        rgba(254, 226, 226, 0.80);
+  --badge-fail-border:    rgba(239, 68, 68, 0.40);
+  --badge-fail-text:      #991b1b;
+  --badge-skip-bg:        rgba(253, 242, 248, 0.80);
+  --badge-skip-border:    rgba(236, 72, 153, 0.40);
+  --badge-skip-text:      #9d174d;
+
+  /* Graph nodes (light backgrounds) */
+  --node-ok-bg:         #d1fae5;
+  --node-ok-color:      #065f46;
+  --node-pending-bg:    #fef9c3;
+  --node-pending-color: #854d0e;
+  --node-fail-bg:       #fee2e2;
+  --node-fail-color:    #991b1b;
+  --node-skip-bg:       #fdf2f8;
+  --node-skip-color:    #9d174d;
+  --node-idle-bg:       #f0f4f8;
+  --node-idle-color:    #1e2d3d;
+  --node-idle-border:   #0694b8;
+
+  /* Surface overlays (light-tinted) */
+  --surface-overlay-deep:   rgba(255, 255, 255, 0.99);
+  --surface-overlay-strong: rgba(248, 250, 252, 0.97);
+  --surface-overlay-mid:    rgba(230, 234, 242, 0.85);
+  --surface-overlay-soft:   rgba(220, 225, 235, 0.80);
+  --surface-overlay-faint:  rgba(240, 242, 246, 0.70);
+  --surface-overlay-hover:  rgba(215, 220, 232, 0.97);
+  --surface-punch:          rgba(240, 242, 245, 0.90);
+
+  /* Interactive (teal-based for light mode) */
+  --interactive-bg-glow:      rgba(6, 148, 184, 0.04);
+  --interactive-bg-hover:     rgba(6, 148, 184, 0.08);
+  --interactive-bg-active:    rgba(6, 148, 184, 0.12);
+  --interactive-bg-tint:      rgba(6, 148, 184, 0.12);
+  --interactive-border-soft:  rgba(6, 148, 184, 0.25);
+  --interactive-border-hover: rgba(6, 148, 184, 0.35);
+  --interactive-border:       rgba(6, 148, 184, 0.50);
+
+  /* Warm accent */
+  --warm-bg-hover:  rgba(212, 130, 10, 0.08);
+  --warm-bg-active: rgba(212, 130, 10, 0.15);
+  --warm-border:    rgba(212, 130, 10, 0.45);
+  --accent-shadow:  rgba(212, 130, 10, 0.15);
+
+  /* Danger */
+  --danger-border:    rgba(220, 38, 38, 0.30);
+  --danger-bg-soft:   rgba(254, 226, 226, 0.50);
+  --danger-bg-strong: rgba(254, 226, 226, 0.85);
+
+  /* Structural */
+  --header-bg:   rgba(255, 255, 255, 0.85);
+  --overlay-bg:  rgba(80, 100, 140, 0.40);
+  --code-bg:     rgba(224, 228, 238, 0.80);
+  --code-border: rgba(190, 196, 212, 0.60);
+  --code-color:  #2d3748;
+  --on-accent:   #1a0a00;
+
+  /* Gantt */
+  --gantt-queued-bg:      rgba(102, 126, 234, 0.50);
+  --gantt-scheduled-bg:   rgba(212, 130, 10, 0.60);
+  --gantt-running-bg:     rgba(10, 140, 86, 0.55);
+  --gantt-selected-bg:    rgba(6, 148, 184, 0.06);
+  --gantt-track-bg:       rgba(240, 242, 246, 0.90);
+  --gantt-track-scale-bg: rgba(228, 232, 240, 0.90);
+  --gantt-row-system-bg:  rgba(218, 222, 232, 0.65);
+  --gantt-row-scale-bg:   rgba(208, 213, 226, 0.75);
+  --gantt-tooltip-bg:     rgba(255, 255, 255, 0.98);
+  --gantt-tick-color:     rgba(90, 98, 114, 0.30);
+  --gantt-tick-label:     #5a6272;
+  --gantt-marker-color:   rgba(30, 45, 61, 0.45);
+  --gantt-marker-dot:     #2d3f52;
+
+  /* Progress */
+  --progress-gradient:     linear-gradient(90deg, #0694b8 0%, #d4820a 100%);
+  --progress-track-bg:     rgba(210, 215, 228, 0.90);
+  --progress-track-border: rgba(6, 148, 184, 0.40);
+
+  /* Stat cards */
+  --stat-ok-border:     rgba(22, 163, 74, 0.35);
+  --stat-ok-bg:         rgba(22, 163, 74, 0.06);
+  --stat-warn-border:   rgba(212, 130, 10, 0.35);
+  --stat-warn-bg:       rgba(212, 130, 10, 0.06);
+  --stat-danger-border: rgba(220, 38, 38, 0.35);
+  --stat-danger-bg:     rgba(220, 38, 38, 0.06);
+}

@@ -1,0 +1,50 @@
+name: parallel_demo
+
+# Demonstrates static Czar-mode parallelism: `parallel: N` expands the task
+# into N independent records at compile time. Each shard receives
+# PARALLEL_INDEX and PARALLEL_COUNT env vars and can be tracked individually.
+#
+# For large fan-outs on Cloud Run where per-instance tracking is unnecessary,
+# set `parallel_mode: cloud_run_tasks` instead — Czar emits a single task record
+# and passes `task_count` directly to the Cloud Run Jobs API:
+#
+#   process:
+#     executor: cloudrun
+#     job: my-process-job
+#     parallel: 1000
+#     parallel_mode: cloud_run_tasks
+
+types:
+  ShardResult:
+    shard: int
+    total: int
+    item_count: int
+  AggregateResult:
+    grand_total: int
+    shard_count: int
+    item_count: int
+
+tasks:
+  process:
+    executor: python
+    file: parallel.py
+    function: process_shard
+    # Expands into process[0] … process[3] at compile time.
+    # Each instance gets PARALLEL_INDEX and PARALLEL_COUNT env vars.
+    parallel: 4
+    output_type: types.ShardResult
+
+  aggregate:
+    executor: python
+    file: parallel.py
+    function: aggregate_results
+    # depends_on: [process] is rewritten to all four instances automatically.
+    depends_on: [process]
+    input_type:
+      # ref: tasks.process.output resolves to an array of all shard outputs,
+      # ordered by index: [{shard: 0, ...}, {shard: 1, ...}, ...]
+      shards: [types.ShardResult]
+    inputs:
+      shards:
+        ref: tasks.process.output
+    output_type: types.AggregateResult

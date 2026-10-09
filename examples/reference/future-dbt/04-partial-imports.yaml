@@ -1,0 +1,6 @@
+import:
+  - dbt: ./transform
+    models:
+      - staging.*        # All staging models
+      - marts.core.*     # All core mart models
+      - marts.fct_sales  # Specific model

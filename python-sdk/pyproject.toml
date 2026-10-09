@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "czar"
+version = "0.1.0"
+description = "Czar SDK for Python - write workflow tasks with deferrables support"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0 OR MIT"
+license-files = ["LICENSE-APACHE", "LICENSE-MIT"]
+keywords = ["workflow", "orchestration", "czar", "deferrables"]
+authors = [
+    {name = "Czar contributors"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.optional-dependencies]
+cli = ["czar-cli==0.1.0"]
+local = ["czar-cli==0.1.0"]
+all = ["czar-cli==0.1.0"]
+
+[project.urls]
+Homepage = "https://github.com/czarhq/czar"
+Repository = "https://github.com/czarhq/czar"
+Documentation = "https://github.com/czarhq/czar/tree/main/docs"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["czar*"]
+
+[tool.uv]
+exclude-newer = "7 days"

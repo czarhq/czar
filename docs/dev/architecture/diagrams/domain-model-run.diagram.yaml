@@ -1,0 +1,24 @@
+title: Run lifecycle
+direction: RIGHT
+nodes:
+  - { id: begin, shape: start, label: start }
+  - { id: pending, shape: state, label: pending }
+  - { id: running, shape: state, label: running }
+  - { id: paused, shape: state, label: paused }
+  - { id: success, shape: state, label: success, tone: good }
+  - { id: failed, shape: state, label: failed, tone: bad }
+  - { id: cancelled, shape: state, label: cancelled, tone: quiet }
+edges:
+  - { from: begin, to: pending, label: created }
+  - { from: pending, to: running, label: Tasks created }
+  - { from: running, to: success, label: "all Tasks ended, none failed" }
+  - { from: running, to: failed, label: "all Tasks ended, one failed" }
+  - { from: running, to: paused, label: pause }
+  - { from: paused, to: running, label: resume }
+  - { from: pending, to: paused, label: pause }
+  - { from: paused, to: success, label: last Tasks ended }
+  - { from: paused, to: failed, label: last Tasks ended }
+  - { from: pending, to: failed, label: "can't build Tasks" }
+  - { from: running, to: cancelled, label: "cancel (also from pending, paused)" }
+  - { from: failed, to: pending, label: retry }
+  - { from: cancelled, to: pending, label: retry }

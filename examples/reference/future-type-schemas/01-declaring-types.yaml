@@ -1,0 +1,21 @@
+types:
+  User:
+    id: int
+    name: str
+    email: str
+    created_at: datetime
+
+  ExtractOutput:
+    users: list[User]
+    count: int
+
+tasks:
+  extract_users:
+    executor: python
+    file: tasks/extract_users.py
+    output: ExtractOutput
+
+  transform_users:
+    executor: python
+    file: tasks/transform.py
+    depends_on: [extract_users]

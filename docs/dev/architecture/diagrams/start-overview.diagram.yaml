@@ -1,0 +1,13 @@
+title: Who starts a Run, and which Snapshot it pins
+direction: RIGHT
+nodes:
+  - { id: cli, is: CLI, detail: "czar trigger, czar run start,\nczar run FILE", link: "../flows/start.md#from-the-cli" }
+  - { id: api, is: API, detail: "POST /api/runs\nfrom the Web UI or TUI", link: "../flows/start.md#from-the-web-ui-or-tui" }
+  - { id: cron, is: Scheduler, link: "../flows/start.md#from-a-schedule" }
+  - { id: current, label: pending Run, detail: current Snapshot, icon: "lucide:play" }
+  - { id: flow, label: pending Run, detail: flow Snapshot, icon: "lucide:play" }
+edges:
+  - { from: cli, to: current, label: "no --flow, no selectors" }
+  - { from: cli, to: flow, label: "--flow or selectors" }
+  - { from: api, to: flow, label: always }
+  - { from: cron, to: current, label: a due schedule }

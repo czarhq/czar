@@ -1,0 +1,20 @@
+type: sequence
+title: Running a Task as a call inside czar
+participants:
+  - { id: sched, is: Scheduler }
+  - { id: exec, is: Executor }
+  - { id: proc, is: Proc, label: Task code (library or module), icon: "lucide:library" }
+steps:
+  - { from: sched, to: exec, label: "execute(Task id, job name, params)" }
+  - { from: exec, to: sched, label: running, kind: async }
+  - { from: exec, to: proc, label: call with the input JSON }
+  - { from: proc, to: exec, label: "a string, CZAR_OUTPUT: prefix optional", kind: return }
+  - alt:
+      - when: the string is JSON
+        steps:
+          - { from: exec, to: sched, label: "success, with that JSON", kind: async }
+          - { from: exec, to: sched, label: execution name, kind: return }
+      - when: "load or call error, or non-JSON from Wasm"
+        steps:
+          - { from: exec, to: sched, label: failed, kind: async }
+          - { from: exec, to: sched, label: error, kind: return }

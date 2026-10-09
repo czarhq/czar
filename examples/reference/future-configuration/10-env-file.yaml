@@ -1,0 +1,2 @@
+# czar.yaml (dev config)
+env_file: .env

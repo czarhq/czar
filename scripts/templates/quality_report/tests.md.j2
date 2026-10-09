@@ -1,0 +1,33 @@
+# Tests
+
+| Check | Status | Exit | Duration | Log |
+|---|---|---:|---:|---|
+| `{{ checks_by_key.tests_rust_unit.commands[0] }}` | {{ checks_by_key.tests_rust_unit.display_status }} | {{ checks_by_key.tests_rust_unit.exit_code }} | {{ checks_by_key.tests_rust_unit.duration_s }}s | [{{ checks_by_key.tests_rust_unit.log_path }}]({{ checks_by_key.tests_rust_unit.log_path }}) |
+| `{{ checks_by_key.tests_rust_integration.commands[0] }}` | {{ checks_by_key.tests_rust_integration.display_status }} | {{ checks_by_key.tests_rust_integration.exit_code }} | {{ checks_by_key.tests_rust_integration.duration_s }}s | [{{ checks_by_key.tests_rust_integration.log_path }}]({{ checks_by_key.tests_rust_integration.log_path }}) |
+| `{{ checks_by_key.tests_frontend.commands[0] }}` | {{ checks_by_key.tests_frontend.display_status }} | {{ checks_by_key.tests_frontend.exit_code }} | {{ checks_by_key.tests_frontend.duration_s }}s | [{{ checks_by_key.tests_frontend.log_path }}]({{ checks_by_key.tests_frontend.log_path }}) |
+| `{{ checks_by_key.tests_smoke.commands[0] }}` | {{ checks_by_key.tests_smoke.display_status }} | {{ checks_by_key.tests_smoke.exit_code }} | {{ checks_by_key.tests_smoke.duration_s }}s | [{{ checks_by_key.tests_smoke.log_path }}]({{ checks_by_key.tests_smoke.log_path }}) |
+| `{{ checks_by_key.tests_smoke_dev_stack.commands[0] }}` | {{ checks_by_key.tests_smoke_dev_stack.display_status }} | {{ checks_by_key.tests_smoke_dev_stack.exit_code }} | {{ checks_by_key.tests_smoke_dev_stack.duration_s }}s | [{{ checks_by_key.tests_smoke_dev_stack.log_path }}]({{ checks_by_key.tests_smoke_dev_stack.log_path }}) |
+
+## Notes
+
+- `just quality-test-rust-unit` runs workspace library tests.
+- `just quality-test-rust-integration` runs workspace integration tests.
+- `just quality-test-frontend` runs the frontend unit test suite.
+- `just quality-smoke` runs the CLI, Playwright web, and PTY-driven Ratatui smoke tests.
+- `just quality-smoke-dev-stack` boots the same Docker Compose stack as `just up`, checks the frontend proxy path, triggers a real workflow run, and waits for success.
+
+{% if checks_by_key.tests_smoke.exit_code != 0 %}
+## Smoke Failure Tail
+
+```text
+{{ log_tail['tests_smoke'] }}
+```
+{% endif %}
+
+{% if checks_by_key.tests_smoke_dev_stack.exit_code != 0 %}
+## Dev Stack Smoke Failure Tail
+
+```text
+{{ log_tail['tests_smoke_dev_stack'] }}
+```
+{% endif %}

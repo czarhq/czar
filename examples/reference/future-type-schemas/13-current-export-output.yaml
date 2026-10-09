@@ -1,0 +1,4 @@
+inputs:
+  url: str
+output:
+  data: str

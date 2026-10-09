@@ -1,0 +1,23 @@
+title: Choosing the command for a child process
+direction: DOWN
+nodes:
+  - { id: params, label: Task params, icon: "lucide:sliders-horizontal" }
+  - { id: image, shape: decision, label: container_image set? }
+  - { id: c1, label: docker or podman run --rm, detail: "workdir mounted at /workspace,\n--env per variable, secrets read-only", icon: "logos:docker-icon" }
+  - { id: custom, shape: decision, label: custom executor? }
+  - { id: c2, label: uv run python run_executor.py, icon: "devicon:python" }
+  - { id: py, shape: decision, label: "task_file or\ntask_module?" }
+  - { id: c3, label: uv run python run_task.py, detail: in the pyproject.toml directory, icon: "devicon:python" }
+  - { id: args, shape: decision, label: task_args set? }
+  - { id: c4, label: the command, detail: "run directly with its arguments", icon: "lucide:square-terminal" }
+  - { id: c5, label: sh -c command, icon: "lucide:square-terminal" }
+edges:
+  - { from: params, to: image, main: true }
+  - { from: image, to: c1, label: "yes" }
+  - { from: image, to: custom, label: "no", main: true }
+  - { from: custom, to: c2, label: "yes" }
+  - { from: custom, to: py, label: "no", main: true }
+  - { from: py, to: c3, label: "yes" }
+  - { from: py, to: args, label: "no", main: true }
+  - { from: args, to: c4, label: "yes", main: true }
+  - { from: args, to: c5, label: "no" }

@@ -1,0 +1,9 @@
+# locations.yaml
+locations:
+  - name: etl
+    image: us-central1-docker.pkg.dev/my-project/workflows/etl:latest
+    refresh: "*/15 * * * *"
+    
+  - name: ml-pipelines
+    image: us-central1-docker.pkg.dev/my-project/workflows/ml:latest
+    refresh: "0 * * * *"

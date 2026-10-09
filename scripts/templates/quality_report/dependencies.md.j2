@@ -1,0 +1,43 @@
+# Dependencies
+
+| Check | Status | Exit | Duration | Log |
+|---|---|---:|---:|---|
+| `{{ checks_by_key.deps_licenses.commands[0] }}` | {{ checks_by_key.deps_licenses.status }} | {{ checks_by_key.deps_licenses.exit_code }} | {{ checks_by_key.deps_licenses.duration_s }}s | [{{ checks_by_key.deps_licenses.log_path }}]({{ checks_by_key.deps_licenses.log_path }}) |
+| `{{ checks_by_key.deps_freshness.commands[0] }}` | {{ checks_by_key.deps_freshness.status }} | {{ checks_by_key.deps_freshness.exit_code }} | {{ checks_by_key.deps_freshness.duration_s }}s | [{{ checks_by_key.deps_freshness.log_path }}]({{ checks_by_key.deps_freshness.log_path }}) |
+| `{{ checks_by_key.deps_vulns.commands[0] }}` | {{ checks_by_key.deps_vulns.status }} | {{ checks_by_key.deps_vulns.exit_code }} | {{ checks_by_key.deps_vulns.duration_s }}s | [{{ checks_by_key.deps_vulns.log_path }}]({{ checks_by_key.deps_vulns.log_path }}) |
+| `{{ checks_by_key.deps_outdated.commands[0] }}` | {{ checks_by_key.deps_outdated.status }} | {{ checks_by_key.deps_outdated.exit_code }} | {{ checks_by_key.deps_outdated.duration_s }}s | [{{ checks_by_key.deps_outdated.log_path }}]({{ checks_by_key.deps_outdated.log_path }}) |
+
+## Package Summary
+
+{% if license_summary.python_projects -%}
+- Rust scope: workspace
+- Python: {{ license_summary.python_projects }} project(s), {{ license_summary.python_packages }} third-party package(s)
+- JS: {{ license_summary.js_projects }} production project(s), {{ license_summary.js_packages }} third-party package(s), {{ license_summary.js_skipped }} skipped
+{% else -%}
+- {{ license_summary.raw }}
+{% endif %}
+
+## Notes
+
+- `just outdated` is informational and does not fail only because newer packages exist.
+- `just freshness` enforces native `uv` and `pnpm` release-age gates.
+- `just vulns` is the vulnerability gate.
+
+{% if checks_by_key.deps_licenses.exit_code != 0 or checks_by_key.deps_freshness.exit_code != 0 or checks_by_key.deps_vulns.exit_code != 0 %}
+## Failure Excerpts
+
+### Licenses
+```text
+{{ log_tail['deps_licenses'] }}
+```
+
+### Freshness
+```text
+{{ log_tail['deps_freshness'] }}
+```
+
+### Vulnerabilities
+```text
+{{ log_tail['deps_vulns'] }}
+```
+{% endif %}

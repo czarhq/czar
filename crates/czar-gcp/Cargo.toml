@@ -1,0 +1,35 @@
+[package]
+name = "czar-gcp"
+version.workspace = true
+edition.workspace = true
+description = "Google Cloud integrations for Czar"
+readme = "README.md"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+keywords = ["workflow", "orchestration", "gcp"]
+categories = ["development-tools"]
+
+[lib]
+name = "czar_gcp"
+
+[dependencies]
+czar-core = { workspace = true }
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+gcp_auth = { workspace = true }
+reqwest = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+url = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt", "time"] }
+uuid = { workspace = true, features = ["v4"] }
+
+[lints]
+workspace = true

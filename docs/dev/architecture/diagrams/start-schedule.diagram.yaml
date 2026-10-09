@@ -1,0 +1,12 @@
+type: sequence
+title: Starting Runs for due schedules
+participants:
+  - { id: sched, is: Scheduler }
+  - { id: store, is: Store }
+steps:
+  - { note: "at most every 30 s, inside a tick", over: sched }
+  - { from: sched, to: store, label: Workflows with the schedule enabled and the next time passed }
+  - loop: each due Workflow
+    steps:
+      - { from: sched, to: store, label: "insert Run: pending, the current Snapshot" }
+      - { from: sched, to: store, label: last and next schedule time }

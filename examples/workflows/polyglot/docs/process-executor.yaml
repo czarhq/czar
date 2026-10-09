@@ -1,0 +1,4 @@
+rust_process_sdk:
+  executor: process
+  # Process executor: native binary that uses czar::run_task.
+  command: rust_tasks/target/${{ vars.BUILD_PROFILE }}/process_sdk

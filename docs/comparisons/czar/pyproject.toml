@@ -1,0 +1,8 @@
+[project]
+name = "czar-examples"
+version = "0.1.0"
+description = "Czar implementations of the comparison benchmark examples"
+requires-python = ">=3.12"
+
+[tool.uv]
+exclude-newer = "7 days"

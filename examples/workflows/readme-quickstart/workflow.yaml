@@ -1,0 +1,58 @@
+# workflow.yaml
+name: my_etl
+
+types:
+  ExtractResult:
+    raw_path: str
+    user_count: int
+  TransformResult:
+    active_path: str
+    active_count: int
+  LoadResult:
+    output_path: str
+
+tasks:
+  extract:
+    executor: python
+    file: tasks.py
+    function: extract
+    input_type:
+      api_url: str
+      raw_path: str
+    output_type: types.ExtractResult
+    inputs:
+      api_url:
+        const: "file://users.json"
+      raw_path:
+        const: "/tmp/users_raw.json"
+    timeout: 600
+
+  transform:
+    executor: python
+    file: tasks.py
+    function: transform
+    depends_on: [extract]
+    input_type:
+      raw_path: str
+      active_path: str
+    output_type: types.TransformResult
+    inputs:
+      raw_path:
+        ref: tasks.extract.output.raw_path
+      active_path:
+        const: "/tmp/users_active.json"
+
+  load:
+    executor: python
+    file: tasks.py
+    function: load
+    depends_on: [transform]
+    input_type:
+      active_path: str
+      output_path: str
+    output_type: types.LoadResult
+    inputs:
+      active_path:
+        ref: tasks.transform.output.active_path
+      output_path:
+        const: "/tmp/active_users.json"

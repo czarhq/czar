@@ -1,0 +1,46 @@
+{
+  "StartAt": "ParallelFetch",
+  "States": {
+    "ParallelFetch": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "FetchUsers",
+          "States": {
+            "FetchUsers": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:us-east-1:123456789012:function:fetch_users",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "FetchOrders",
+          "States": {
+            "FetchOrders": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:us-east-1:123456789012:function:fetch_orders",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "FetchProducts",
+          "States": {
+            "FetchProducts": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:us-east-1:123456789012:function:fetch_products",
+              "End": true
+            }
+          }
+        }
+      ],
+      "Next": "CombineData"
+    },
+    "CombineData": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:combine_data",
+      "End": true
+    }
+  }
+}

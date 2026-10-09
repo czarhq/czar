@@ -1,0 +1,15 @@
+[tool.uv]
+package = false
+exclude-newer = "7 days"
+
+[project]
+name = "czar-progress-demo"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "czar",
+    "tqdm",
+]
+
+[tool.uv.sources]
+czar = { path = "../../../python-sdk", editable = true }

@@ -1,0 +1,38 @@
+name: fast_demo
+
+types:
+  TaskResult:
+    task: str
+    status: str
+    timestamp: float
+
+tasks:
+  task_a:
+    executor: python
+    module: fast
+    function: task_a
+    output_type: types.TaskResult
+
+  task_b:
+    executor: python
+    module: fast
+    function: task_b
+    depends_on: [task_a]
+    input_type:
+      task_a: types.TaskResult
+    output_type: types.TaskResult
+    inputs:
+      task_a:
+        ref: tasks.task_a.output
+
+  task_c:
+    executor: python
+    module: fast
+    function: task_c
+    depends_on: [task_b]
+    input_type:
+      task_b: types.TaskResult
+    output_type: types.TaskResult
+    inputs:
+      task_b:
+        ref: tasks.task_b.output

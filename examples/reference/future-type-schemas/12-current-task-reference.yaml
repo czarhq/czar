@@ -1,0 +1,5 @@
+tasks:
+  extract:
+    executor: python
+    file: tasks_extract.py
+    output_type: types.ExtractOutput

@@ -1,0 +1,18 @@
+title: czar with remote workers
+direction: DOWN
+nodes:
+  - { id: server, label: Server, icon: "lucide:server", kind: boundary }
+  - { id: serve, in: server, label: czar serve, detail: "API, Scheduler, Executors", icon: "lucide:crown" }
+  - { id: db, in: server, label: Database, detail: SQLite or Postgres, icon: "devicon:postgresql" }
+  - { id: c1, label: ETL container, detail: "your ETL code", icon: "devicon:docker", kind: boundary }
+  - { id: w1, in: c1, label: czar-worker, detail: "HTTP on :8080, no database", icon: "lucide:crown" }
+  - { id: p1, in: c1, label: Task processes, detail: "sh, uv run python", icon: "lucide:cpu" }
+  - { id: c2, label: ML container, detail: "your ML code", icon: "devicon:docker", kind: boundary }
+  - { id: w2, in: c2, label: czar-worker, detail: "HTTP on :8080, no database", icon: "lucide:crown" }
+  - { id: p2, in: c2, label: Task processes, detail: "sh, uv run python", icon: "lucide:cpu" }
+edges:
+  - { from: serve, to: db, label: runs and tasks }
+  - { from: serve, to: w1, label: "/compile, /execute" }
+  - { from: serve, to: w2, label: "/compile, /execute" }
+  - { from: w1, to: p1, label: start }
+  - { from: w2, to: p2, label: start }

@@ -1,0 +1,29 @@
+type: sequence
+title: Cancel a Run
+participants:
+  - { id: user, is: User }
+  - { id: ui, is: UI }
+  - { id: cli, is: CLI }
+  - { id: api, is: API }
+  - { id: store, is: Store }
+  - { id: sched, is: Scheduler }
+  - { id: exec, is: Executor }
+steps:
+  - alt:
+      - when: Web UI or TUI
+        steps:
+          - { from: user, to: ui, label: Cancel }
+          - { from: ui, to: api, label: "POST /api/runs/{id}/cancel" }
+          - { from: api, to: store, label: "Run and its pending, dispatched and running Tasks cancelled" }
+          - { from: api, to: store, label: Task states for the cancelled Tasks }
+      - when: CLI
+        steps:
+          - { from: user, to: cli, label: czar run cancel RUN }
+          - { from: cli, to: store, label: "Run and its pending, dispatched and running Tasks cancelled" }
+  - opt: czar run FILE is waiting on this Run
+    steps:
+      - { from: cli, to: store, label: "read the Run: cancelled" }
+      - { from: cli, to: user, label: "Run was cancelled; exit code 1", kind: return }
+  - { note: nothing tells the work to stop, over: [store, exec] }
+  - { from: exec, to: sched, label: "later, a report from work that was already out", kind: async }
+  - { from: sched, to: store, label: written over the cancelled Task }

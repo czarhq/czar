@@ -1,0 +1,15 @@
+name: warehouse_refresh
+
+tasks:
+  stage_users:
+    executor: bigquery
+    config_file: sql/staging/users.yaml
+
+  stage_orders:
+    executor: bigquery
+    config_file: sql/staging/orders.yaml
+
+  build_facts:
+    executor: bigquery
+    config_file: sql/warehouse/facts.yaml
+    depends_on: [stage_users, stage_orders]

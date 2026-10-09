@@ -1,0 +1,35 @@
+# in-ctrl: the docs site and diagrams (https://github.com/gajop/in-ctrl)
+title: czar
+description: A workflow orchestrator. Early preview.
+docs: docs
+home: README.md
+repo: https://github.com/czarhq/czar
+branch: main
+site:
+  url: https://czarhq.github.io
+  base: /czar/
+  sidebar:
+    - guide
+    - design
+    - deployment
+    - { dir: dev, label: Developer docs }
+    - comparisons
+    - reports
+# The building blocks of docs/dev/architecture/writing.md: one label and icon each,
+# so every diagram draws them the same way (`is: Scheduler`).
+vocabulary:
+  User: { label: User, icon: "lucide:user" }
+  CLI: { label: CLI, icon: "lucide:square-terminal" }
+  UI: { label: "Web UI", icon: "lucide:app-window" }
+  TUI: { label: TUI, icon: "lucide:terminal" }
+  API: { label: API, icon: "lucide:globe" }
+  Server: { label: Server, icon: "lucide:crown" }
+  Compiler: { label: Compiler, icon: "lucide:file-cog" }
+  Scheduler: { label: Scheduler, icon: "lucide:workflow" }
+  Triggerer: { label: Triggerer, icon: "lucide:alarm-clock" }
+  Executor: { label: Executor, icon: "lucide:cog" }
+  Worker: { label: Worker, icon: "lucide:container" }
+  Proc: { label: "Task process", icon: "lucide:cpu" }
+  Store: { label: Store, icon: "lucide:database" }
+  Service: { label: "Job service", icon: "lucide:cloud" }
+  Notify: { label: Notifier, icon: "lucide:bell" }

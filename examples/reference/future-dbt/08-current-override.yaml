@@ -1,0 +1,3 @@
+tasks:
+  dbt.analytics.marts.daily_revenue:
+    depends_on: [audit]

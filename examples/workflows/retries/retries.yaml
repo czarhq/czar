@@ -1,0 +1,37 @@
+name: retries_demo
+
+types:
+  FlakeyOutput:
+    ok: bool
+    attempt: int
+  HelloOutput:
+    message: str
+    timestamp: datetime_tz
+
+tasks:
+  flakey:
+    executor: python
+    file: retries.py
+    function: flakey
+    retries: 2
+    input_type:
+      fail_times: int
+    output_type: types.FlakeyOutput
+    inputs:
+      fail_times:
+        const: 1
+
+  greet_after_retry:
+    executor: python
+    file: retries.py
+    function: hello
+    depends_on: [flakey]
+    input_type:
+      name: str
+      delay: float
+    output_type: types.HelloOutput
+    inputs:
+      name:
+        const: after retry
+      delay:
+        const: 2

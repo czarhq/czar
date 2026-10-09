@@ -1,0 +1,36 @@
+# Count from upstream output
+tasks:
+  discover:
+    executor: python
+    file: tasks/discover.py
+    output_type:
+      count: int
+      files: list[str]
+
+  process:
+    executor: python
+    file: tasks/process.py
+    depends_on: [discover]
+    parallel: discover.count
+
+  aggregate:
+    executor: python
+    file: tasks/aggregate.py
+    depends_on: [process]
+    input_type:
+      slots: [int]
+    inputs:
+      slots:
+        ref: tasks.process.output.slot
+
+# Foreach
+  process_file:
+    executor: python
+    file: tasks/process_file.py
+    depends_on: [discover]
+    foreach: discover.files
+    input_type:
+      file: str
+    inputs:
+      file:
+        ref: foreach.item

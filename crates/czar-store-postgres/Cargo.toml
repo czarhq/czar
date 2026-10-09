@@ -1,0 +1,33 @@
+[package]
+name = "czar-store-postgres"
+version.workspace = true
+edition.workspace = true
+description = "Postgres state storage for Czar"
+readme = "README.md"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+keywords = ["workflow", "orchestration", "database", "postgres"]
+categories = ["database", "development-tools"]
+
+[lib]
+name = "czar_store_postgres"
+
+[dependencies]
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+chrono = { workspace = true, default-features = false, features = ["clock", "serde"] }
+czar-core = { workspace = true, features = ["sqlx"] }
+serde_json = { workspace = true }
+sqlx = { workspace = true, features = ["runtime-tokio", "tls-rustls", "postgres", "macros", "migrate", "uuid", "chrono", "json"] }
+uuid = { workspace = true, features = ["v4"] }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+url = { workspace = true }
+
+[lints]
+workspace = true

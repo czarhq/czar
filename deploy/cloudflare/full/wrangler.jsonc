@@ -1,0 +1,40 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "czar-full",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-03-14",
+  "vars": {
+    "CZAR_DB_BACKEND": "d1"
+  },
+  "containers": [
+    {
+      "class_name": "CzarFullApp",
+      "image": "./Dockerfile",
+      "image_build_context": "../../..",
+      "max_instances": 1
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "class_name": "CzarFullApp",
+        "name": "CZAR_FULL_APP"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      // The container durable object is kept only for container coordination.
+      "new_sqlite_classes": [
+        "CzarFullApp"
+      ],
+      "tag": "v1"
+    }
+  ],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "../../../crates/czar-web-react/dist",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true
+  }
+}

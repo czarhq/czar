@@ -1,0 +1,23 @@
+[package]
+name = "czar"
+version.workspace = true
+edition.workspace = true
+description = "Write czar tasks in Rust: the #[task] macro, task input and output, context, deferrables"
+readme = "README.md"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+
+[lib]
+name = "czar"
+
+[dependencies]
+czar-macros = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+
+[lints]
+workspace = true

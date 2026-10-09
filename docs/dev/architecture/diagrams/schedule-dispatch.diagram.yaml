@@ -1,0 +1,22 @@
+type: sequence
+title: Dispatch ready Tasks
+participants:
+  - { id: sched, is: Scheduler }
+  - { id: store, is: Store }
+  - { id: exec, is: Executor }
+steps:
+  - { from: sched, to: store, label: "up to 100 ready Tasks, oldest first" }
+  - { from: sched, to: store, label: "their Runs' Task statuses, upstream outputs, Task states" }
+  - alt:
+      - when: a placeholder fans out
+        steps:
+          - { from: sched, to: store, label: "replace it with x[0] .. x[n-1], pending" }
+          - { note: nothing else is dispatched this tick, over: sched }
+      - when: otherwise
+        steps:
+          - par:
+              - when: "each Task the decision lets through, up to 10 at a time"
+                steps:
+                  - { from: sched, to: exec, label: "execute, with resolved inputs" }
+                  - { from: exec, to: sched, label: execution name, kind: return }
+          - { from: sched, to: store, label: "dispatched Tasks, with execution names" }

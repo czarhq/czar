@@ -1,0 +1,27 @@
+type: sequence
+title: Get the YAML
+participants:
+  - { id: user, is: User }
+  - { id: cli, is: CLI }
+  - { id: api, is: API }
+  - { id: server, is: Server }
+  - { id: worker, is: Worker }
+  - { id: compiler, is: Compiler }
+steps:
+  - alt:
+      - when: "czar load, czar workflow deploy, czar run FILE"
+        steps:
+          - { from: user, to: cli, label: command with a YAML path }
+          - { from: cli, to: compiler, label: "YAML file, after running a generate: script if it is a descriptor" }
+      - when: POST /api/workflows
+        steps:
+          - { from: user, to: api, label: YAML in the body }
+          - { from: api, to: compiler, label: YAML text }
+      - when: "reload: POST /api/workflows/reload, or czar serve startup"
+        steps:
+          - { from: api, to: compiler, label: "YAML text and source path, for every workflow file under the root" }
+      - when: "worker sync: at startup, on a timer, or POST /api/workers"
+        steps:
+          - { from: server, to: worker, label: "POST /compile, bearer token if configured" }
+          - { from: worker, to: server, label: "workflow name, task list, source YAML", kind: return }
+          - { from: server, to: compiler, label: "source YAML, relaxed validation" }

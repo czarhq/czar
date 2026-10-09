@@ -1,0 +1,35 @@
+name: worker_e2e
+
+tasks:
+  extract:
+    executor: python
+    file: tasks/extract.py
+    output_type:
+      records: list[str]
+      count: int
+
+  transform:
+    executor: python
+    file: tasks/transform.py
+    depends_on: [extract]
+    input_type:
+      records: list[str]
+    inputs:
+      records:
+        ref: tasks.extract.output.records
+    output_type:
+      uppercased: list[str]
+      count: int
+
+  load:
+    executor: python
+    file: tasks/load.py
+    depends_on: [transform]
+    input_type:
+      uppercased: list[str]
+    inputs:
+      uppercased:
+        ref: tasks.transform.output.uppercased
+    output_type:
+      written: int
+      done: bool

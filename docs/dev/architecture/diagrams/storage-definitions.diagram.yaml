@@ -1,0 +1,19 @@
+title: Who writes the entities that describe a Workflow
+direction: RIGHT
+nodes:
+  - { id: compiler, is: Compiler }
+  - { id: api, is: API }
+  - { id: cli, is: CLI }
+  - { id: scheduler, is: Scheduler }
+  - { id: wtask, label: "Workflow task\nand Hook rows", icon: "lucide:table", tags: [Store] }
+  - { id: snapshot, label: Snapshot, icon: "lucide:table", tags: [Store] }
+  - { id: workflow, label: Workflow, icon: "lucide:table", tags: [Store] }
+edges:
+  - { from: compiler, to: wtask, label: replace all }
+  - { from: compiler, to: snapshot, label: create }
+  - { from: compiler, to: workflow, label: "create, current Snapshot" }
+  - { from: api, to: snapshot, label: flow Snapshot }
+  - { from: api, to: workflow, label: schedule }
+  - { from: cli, to: snapshot, label: flow Snapshot }
+  - { from: cli, to: workflow, label: schedule }
+  - { from: scheduler, to: workflow, label: cron times }

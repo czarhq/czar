@@ -1,0 +1,24 @@
+export DAGSTER_HOME := justfile_directory() / ".dagster_home"
+
+default:
+    @just --list
+
+# Start Dagster UI server
+server:
+    mkdir -p $DAGSTER_HOME
+    uv run dagster dev
+
+# Materialize assets
+materialize assets:
+    uv run dagster asset materialize --select '{{assets}}' -m definitions
+
+# Materialize all assets
+materialize-all:
+    uv run dagster asset materialize --select '*' -m definitions
+
+# Run the conditional_branching job
+run-job:
+    uv run dagster job execute -j conditional_branching_flow -m definitions
+
+# Run all (materialize assets + run job)
+run-all: materialize-all run-job

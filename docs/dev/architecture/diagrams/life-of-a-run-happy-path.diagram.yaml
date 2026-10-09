@@ -1,0 +1,24 @@
+type: sequence
+title: The happy path of daily_etl
+participants:
+  - { id: user, is: User }
+  - { id: cli, is: CLI }
+  - { id: sched, is: Scheduler }
+  - { id: exec, is: Executor }
+  - { id: proc, is: Proc }
+  - { id: store, is: Store }
+steps:
+  - { from: user, to: cli, label: czar workflow deploy daily_etl.yaml }
+  - { from: cli, to: store, label: "Workflow, Workflow tasks, Snapshot S1" }
+  - { from: user, to: cli, label: czar trigger daily_etl }
+  - { from: cli, to: store, label: "Run R1, pending, pinned to S1" }
+  - { from: sched, to: store, label: "R1's Tasks, pending, and R1 running" }
+  - loop: each Task, once its dependencies have ended
+    steps:
+      - { from: sched, to: exec, label: execute the Task }
+      - { from: sched, to: store, label: Task dispatched }
+      - { from: exec, to: proc, label: start the work }
+      - { from: proc, to: exec, label: "CZAR_OUTPUT line, exit 0", kind: return }
+      - { from: exec, to: sched, label: "success, with the output", kind: async }
+      - { from: sched, to: store, label: "Task success, Task state" }
+  - { from: sched, to: store, label: R1 success }

@@ -1,0 +1,21 @@
+type: sequence
+title: Running a Task as a child process
+participants:
+  - { id: sched, is: Scheduler }
+  - { id: exec, is: Executor }
+  - { id: proc, is: Proc }
+steps:
+  - { from: sched, to: exec, label: "execute(Task id, job name, params)" }
+  - { from: exec, to: exec, label: "build the environment, write secret files" }
+  - { from: exec, to: sched, label: "execution name, at once", kind: return }
+  - alt:
+      - when: the process starts
+        steps:
+          - { from: exec, to: proc, label: spawn the command }
+          - { from: exec, to: sched, label: "running, with an \"S running ...\" log line", kind: async }
+          - { from: proc, to: exec, label: "stdout and stderr lines, read as they come", kind: return }
+          - { from: proc, to: exec, label: "exit code, after both streams closed", kind: return }
+          - { from: exec, to: sched, label: "success with the kept output (exit 0), or failed", kind: async }
+      - when: "secrets, pyproject.toml or spawn fails"
+        steps:
+          - { from: exec, to: sched, label: "failed, with the reason", kind: async }

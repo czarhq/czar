@@ -1,0 +1,104 @@
+# workflow.yaml
+name: elt_pipeline
+schedule: "0 2 * * *"
+
+tasks:
+  bronze_posts:
+    executor: python
+    file: tasks_load_bronze.py
+    input_type:
+      source: str
+      date: str
+      data_dir: str
+    inputs:
+      source:
+        const: posts
+      date:
+        const: "2024-01-15"
+      data_dir:
+        const: data
+    timeout: 600
+    retries: 3
+
+  bronze_comments:
+    executor: python
+    file: tasks_load_bronze.py
+    input_type:
+      source: str
+      date: str
+      data_dir: str
+    inputs:
+      source:
+        const: comments
+      date:
+        const: "2024-01-15"
+      data_dir:
+        const: data
+    timeout: 600
+    retries: 3
+
+  bronze_users:
+    executor: python
+    file: tasks_load_bronze.py
+    input_type:
+      source: str
+      date: str
+      data_dir: str
+    inputs:
+      source:
+        const: users
+      date:
+        const: "2024-01-15"
+      data_dir:
+        const: data
+    timeout: 600
+    retries: 3
+
+  silver_posts:
+    executor: python
+    file: tasks_transform_silver.py
+    input_type:
+      source: str
+      data_dir: str
+    inputs:
+      source:
+        const: posts
+      data_dir:
+        const: data
+    depends_on: [bronze_posts]
+
+  silver_comments:
+    executor: python
+    file: tasks_transform_silver.py
+    input_type:
+      source: str
+      data_dir: str
+    inputs:
+      source:
+        const: comments
+      data_dir:
+        const: data
+    depends_on: [bronze_comments]
+
+  silver_users:
+    executor: python
+    file: tasks_transform_silver.py
+    input_type:
+      source: str
+      data_dir: str
+    inputs:
+      source:
+        const: users
+      data_dir:
+        const: data
+    depends_on: [bronze_users]
+
+  gold_analytics:
+    executor: python
+    file: tasks_gold_analytics.py
+    input_type:
+      data_dir: str
+    inputs:
+      data_dir:
+        const: data
+    depends_on: [silver_posts, silver_comments, silver_users]

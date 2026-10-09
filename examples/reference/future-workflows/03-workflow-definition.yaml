@@ -1,0 +1,29 @@
+name: string              # required, unique identifier
+schedule: string          # optional, cron expression
+
+import:                   # optional, external sources
+  - dbt: ./path           # import dbt project
+
+types:                    # optional, type schemas
+  TypeName:
+    field: type
+
+tasks:
+  task_name:
+    executor: string      # required, executor name
+    file: string          # task file path
+    input: object         # static input values
+    depends_on: [string]  # upstream task names
+    timeout: int          # seconds, default 3600
+    retries: int          # max retries, default 0
+    retry_delay: int      # seconds between retries
+    parallel: int | ref   # static count or reference
+    foreach: ref          # reference to an upstream array field such as list[str] or str[]
+    concurrency: int      # max parallel instances
+    resources:
+      cpu: int            # millicores or cores
+      memory: string      # e.g. "4Gi"
+    env:
+      KEY: value          # literal value
+    on_failure: string    # "skip" (default) or "run"
+    output: TypeName      # output type for validation

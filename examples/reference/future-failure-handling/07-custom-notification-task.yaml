@@ -1,0 +1,14 @@
+tasks:
+  # Main workflow
+  extract: {}
+  transform:
+    depends_on: [extract]
+  load:
+    depends_on: [transform]
+
+  # Notification
+  notify_failure:
+    executor: python
+    file: tasks/notify.py
+    depends_on: [load]
+    on_failure: run

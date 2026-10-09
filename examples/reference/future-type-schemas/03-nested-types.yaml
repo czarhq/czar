@@ -1,0 +1,11 @@
+types:
+  Address:
+    street: str
+    city: str
+    country: str
+
+  User:
+    id: int
+    name: str
+    email: str
+    address: Address | None

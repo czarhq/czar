@@ -1,0 +1,32 @@
+name: simple_demo
+
+types:
+  HelloOutput:
+    message: str
+    timestamp: float
+  WaitOutput:
+    waited_seconds: int
+  NoteOutput:
+    note: str
+    finished_at: float
+
+tasks:
+  hello:
+    executor: python
+    module: simple
+    function: hello
+    output_type: types.HelloOutput
+
+  wait:
+    executor: python
+    module: simple
+    function: wait
+    depends_on: [hello]
+    output_type: types.WaitOutput
+
+  note:
+    executor: python
+    module: simple
+    function: note
+    depends_on: [wait]
+    output_type: types.NoteOutput

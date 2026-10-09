@@ -1,0 +1,13 @@
+tasks:
+  extract_users:
+    executor: python
+    file: tasks/extract_users.py
+
+  extract_orders:
+    executor: python
+    file: tasks/extract_orders.py
+
+  join:
+    executor: python
+    file: tasks/join.py
+    depends_on: [extract_users, extract_orders]

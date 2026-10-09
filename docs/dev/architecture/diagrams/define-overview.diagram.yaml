@@ -1,0 +1,9 @@
+title: Define a workflow, in three parts
+direction: RIGHT
+nodes:
+  - { id: sources, label: Get the YAML, detail: "CLI, API, reload,\nor worker sync", icon: "lucide:file-input", link: "../flows/define.md#get-the-yaml" }
+  - { id: compile, label: Check and compile, detail: "dbt imports, validation,\nvars, Python signatures", icon: "lucide:file-cog", link: "../flows/define.md#check-and-compile" }
+  - { id: store, is: Store, detail: "Workflow, Workflow tasks,\nSnapshot", link: "../flows/define.md#store" }
+edges:
+  - { from: sources, to: compile }
+  - { from: compile, to: store }

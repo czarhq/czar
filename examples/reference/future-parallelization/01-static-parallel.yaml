@@ -1,0 +1,5 @@
+tasks:
+  process:
+    executor: python
+    file: tasks/process.py
+    parallel: 4

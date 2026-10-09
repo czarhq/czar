@@ -1,0 +1,14 @@
+title: czar on Cloudflare
+direction: DOWN
+nodes:
+  - { id: people, label: People, detail: browser, icon: "lucide:users" }
+  - { id: cf, label: Cloudflare account, icon: "logos:cloudflare-icon", kind: boundary }
+  - { id: worker, in: cf, label: Worker czar-full, detail: "checks the Basic auth password", icon: "cloudflare:workers" }
+  - { id: assets, in: cf, label: Static assets, detail: the web UI, icon: "lucide:app-window" }
+  - { id: container, in: cf, label: Container, detail: "czar serve on :8080", icon: "cloudflare:containers", tags: [1 instance, sleeps after 15 min] }
+  - { id: d1, in: cf, label: D1, detail: the database, icon: "cloudflare:d1" }
+edges:
+  - { from: people, to: worker, label: HTTPS, both: false }
+  - { from: worker, to: assets, label: UI files }
+  - { from: worker, to: container, label: "/api, /ws" }
+  - { from: container, to: d1, label: D1 HTTP API, style: dashed }

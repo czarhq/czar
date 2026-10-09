@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "userId": 1,
+    "title": "Hello, Czar",
+    "body": "First post from our pipeline",
+    "timestamp": "2024-01-15T00:00:00Z"
+  },
+  {
+    "id": 2,
+    "userId": 2,
+    "title": "Fast orchestration",
+    "body": "Keeping it lightweight and quick",
+    "timestamp": "2024-01-15T00:05:00Z"
+  }
+]

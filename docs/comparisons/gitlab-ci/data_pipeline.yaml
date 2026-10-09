@@ -1,0 +1,32 @@
+stages:
+  - extract
+  - transform
+  - load
+
+extract:
+  stage: extract
+  image: python:3.12-slim
+  script:
+    - python scripts/extract.py
+  artifacts:
+    paths:
+      - data.json
+
+transform:
+  stage: transform
+  image: python:3.12-slim
+  script:
+    - python scripts/transform.py
+  artifacts:
+    paths:
+      - data.json
+  needs:
+    - extract
+
+load:
+  stage: load
+  image: python:3.12-slim
+  script:
+    - python scripts/load.py
+  needs:
+    - transform

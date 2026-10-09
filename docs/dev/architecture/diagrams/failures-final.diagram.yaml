@@ -1,0 +1,14 @@
+type: sequence
+title: Recording a final failure
+participants:
+  - { id: sched, is: Scheduler }
+  - { id: store, is: Store }
+  - { id: exec, is: Executor }
+steps:
+  - { from: sched, to: store, label: "Task failed, its error, \"E\" log lines" }
+  - { from: sched, to: store, label: Task state failed }
+  - { from: sched, to: exec, label: "task.failed Hooks, in the background" }
+  - loop: until no more Tasks change
+    steps:
+      - { from: sched, to: store, label: "pending and paused dependents failed, \"upstream failed\"" }
+  - { note: "then the Run completes as usual: schedule.md", over: [sched, store] }

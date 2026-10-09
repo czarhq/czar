@@ -1,0 +1,31 @@
+stages:
+  - fetch
+  - combine
+
+fetch_users:
+  stage: fetch
+  image: python:3.12-slim
+  script:
+    - python scripts/fetch_users.py
+
+fetch_orders:
+  stage: fetch
+  image: python:3.12-slim
+  script:
+    - python scripts/fetch_orders.py
+
+fetch_products:
+  stage: fetch
+  image: python:3.12-slim
+  script:
+    - python scripts/fetch_products.py
+
+combine_data:
+  stage: combine
+  image: python:3.12-slim
+  script:
+    - python scripts/combine_data.py
+  needs:
+    - fetch_users
+    - fetch_orders
+    - fetch_products

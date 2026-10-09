@@ -1,0 +1,38 @@
+{
+  "name": "tier1_dependencies",
+  "tasks": [
+    {
+      "task_key": "fetch_users",
+      "notebook_task": {
+        "notebook_path": "/Workspace/notebooks/fetch_users",
+        "source": "WORKSPACE"
+      }
+    },
+    {
+      "task_key": "fetch_orders",
+      "notebook_task": {
+        "notebook_path": "/Workspace/notebooks/fetch_orders",
+        "source": "WORKSPACE"
+      }
+    },
+    {
+      "task_key": "fetch_products",
+      "notebook_task": {
+        "notebook_path": "/Workspace/notebooks/fetch_products",
+        "source": "WORKSPACE"
+      }
+    },
+    {
+      "task_key": "combine_data",
+      "depends_on": [
+        {"task_key": "fetch_users"},
+        {"task_key": "fetch_orders"},
+        {"task_key": "fetch_products"}
+      ],
+      "notebook_task": {
+        "notebook_path": "/Workspace/notebooks/combine_data",
+        "source": "WORKSPACE"
+      }
+    }
+  ]
+}

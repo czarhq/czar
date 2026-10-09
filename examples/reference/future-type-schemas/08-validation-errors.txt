@@ -1,0 +1,4 @@
+Task extract_users failed: Output validation error
+Expected: ExtractOutput
+Got: {"users": ["invalid"], "count": 1}
+Error: users: expected list[User], got list[str]

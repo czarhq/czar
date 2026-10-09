@@ -1,0 +1,72 @@
+name: branches_demo
+
+types:
+  HelloOutput:
+    message: str
+    timestamp: datetime_tz
+  ComplimentOutput:
+    line: str
+    adjective: str
+
+tasks:
+  start:
+    executor: python
+    file: branches.py
+    function: hello
+    input_type:
+      name: str
+      delay: float
+    output_type: types.HelloOutput
+    inputs:
+      name:
+        const: branch root
+      delay:
+        const: 2
+
+  left:
+    executor: python
+    file: branches.py
+    function: hello
+    depends_on: [start]
+    input_type:
+      name: str
+      delay: float
+    output_type: types.HelloOutput
+    inputs:
+      name:
+        const: left path
+      delay:
+        const: 5
+
+  right:
+    executor: python
+    file: branches.py
+    function: hello
+    depends_on: [start]
+    input_type:
+      name: str
+      delay: float
+    output_type: types.HelloOutput
+    inputs:
+      name:
+        const: right path
+      delay:
+        const: 5
+
+  join:
+    executor: python
+    file: branches.py
+    function: compliment
+    depends_on: [left, right]
+    input_type:
+      adjective: str
+      left: types.HelloOutput
+      right: types.HelloOutput
+    output_type: types.ComplimentOutput
+    inputs:
+      adjective:
+        const: joined outputs
+      left:
+        ref: tasks.left.output
+      right:
+        ref: tasks.right.output

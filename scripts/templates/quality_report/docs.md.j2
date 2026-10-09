@@ -1,0 +1,11 @@
+# Docs
+
+| Check | Status | Exit | Duration | Log |
+|---|---|---:|---:|---|
+| `{{ checks_by_key.docs_checks.commands | join(' && ') }}` | {{ checks_by_key.docs_checks.status }} | {{ checks_by_key.docs_checks.exit_code }} | {{ checks_by_key.docs_checks.duration_s }}s | [{{ checks_by_key.docs_checks.log_path }}]({{ checks_by_key.docs_checks.log_path }}) |
+| `{{ checks_by_key.examples_validate.commands[0] }}` | {{ checks_by_key.examples_validate.status }} | {{ checks_by_key.examples_validate.exit_code }} | {{ checks_by_key.examples_validate.duration_s }}s | [{{ checks_by_key.examples_validate.log_path }}]({{ checks_by_key.examples_validate.log_path }}) |
+
+## Notes
+
+- Docs checks cover relative links and snippet/example references.
+- Example validation checks all example manifests without executing runnable workflows.

@@ -1,0 +1,30 @@
+title: The processes and how they talk
+direction: DOWN
+nodes:
+  - { id: clients, label: Clients, icon: "lucide:users", kind: boundary }
+  - { id: ui, in: clients, is: UI }
+  - { id: tui, in: clients, is: TUI }
+  - { id: cli, in: clients, is: CLI }
+  - { id: serve, is: Server, label: czar serve, kind: process }
+  - { id: api, in: serve, is: API }
+  - { id: scheduler, in: serve, is: Scheduler }
+  - { id: triggerer, in: serve, is: Triggerer }
+  - { id: executor, in: serve, is: Executor, label: Executors }
+  - { id: store, is: Store }
+  - { id: worker, is: Worker }
+  - { id: proc, is: Proc, label: Task processes }
+  - { id: service, is: Service, label: Job services }
+edges:
+  - { from: ui, to: api, label: HTTP }
+  - { from: tui, to: api, label: HTTP }
+  - { from: cli, to: store, label: SQL }
+  - { from: api, to: store, label: SQL }
+  - { from: scheduler, to: store, label: SQL }
+  - { from: triggerer, to: store, label: SQL }
+  - { from: scheduler, to: executor, label: "execute()" }
+  - { from: executor, to: scheduler, label: "reports (channel)", style: dashed }
+  - { from: triggerer, to: scheduler, label: "job ended (channel)", style: dashed }
+  - { from: executor, to: proc, label: spawn }
+  - { from: executor, to: worker, label: HTTP }
+  - { from: worker, to: proc, label: spawn }
+  - { from: triggerer, to: service, label: HTTP }

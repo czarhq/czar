@@ -1,0 +1,25 @@
+title: What a restarted Scheduler does with what was in flight
+direction: RIGHT
+nodes:
+  - { id: restart, is: Server, label: czar serve starts again, detail: "migrations, then the first tick" }
+  - { id: pend, label: pending Runs and Tasks, icon: "lucide:list-todo" }
+  - { id: out, label: "dispatched and running Tasks\nof the old process", icon: "lucide:cpu" }
+  - { id: jobs, label: open Deferred jobs, icon: "lucide:hourglass" }
+  - { id: cr, label: "Cloud Run executions\nstarted by the cloudrun executor", icon: "gcp:cloud-run" }
+  - { id: cron, label: schedules due during the downtime, icon: "lucide:calendar-clock" }
+  - { id: p1, label: picked up as usual }
+  - { id: o1, label: "stay as they are until the timeout\ncheck fails them, then retries apply" }
+  - { id: j1, label: polled again by the Triggerer }
+  - { id: c1, label: "no longer polled: the Task\nwaits for its timeout" }
+  - { id: s1, label: "fire once, at the first check" }
+edges:
+  - { from: restart, to: pend }
+  - { from: restart, to: out }
+  - { from: restart, to: jobs }
+  - { from: restart, to: cr }
+  - { from: restart, to: cron }
+  - { from: pend, to: p1 }
+  - { from: out, to: o1 }
+  - { from: jobs, to: j1 }
+  - { from: cr, to: c1 }
+  - { from: cron, to: s1 }

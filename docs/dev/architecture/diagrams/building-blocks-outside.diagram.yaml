@@ -1,0 +1,23 @@
+title: What czar serve talks to outside itself
+direction: DOWN
+nodes:
+  - { id: serve, is: Server, label: czar serve, kind: process }
+  - { id: compiler, in: serve, is: Compiler }
+  - { id: scheduler, in: serve, is: Scheduler }
+  - { id: triggerer, in: serve, is: Triggerer }
+  - { id: executor, in: serve, is: Executor }
+  - { id: notifier, in: serve, is: Notify, link: "../building-blocks.md#notifier" }
+  - { id: worker, is: Worker, link: "../building-blocks.md#worker" }
+  - { id: proc, is: Proc, link: "../building-blocks.md#task-process" }
+  - { id: service, is: Service, link: "../building-blocks.md#job-service" }
+  - { id: slack, label: "Slack, email", icon: "logos:slack-icon" }
+edges:
+  - { from: executor, to: proc, label: spawn }
+  - { from: executor, to: worker, label: POST /execute }
+  - { from: executor, to: service, label: Cloud Run job }
+  - { from: worker, to: proc, label: spawn }
+  - { from: proc, to: service, label: starts a job }
+  - { from: triggerer, to: service, label: poll }
+  - { from: compiler, to: worker, label: POST /compile }
+  - { from: scheduler, to: notifier, label: Run failed }
+  - { from: notifier, to: slack }

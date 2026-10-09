@@ -1,0 +1,35 @@
+# GCP Workflows - Data Pipeline Example
+# Demonstrates data passing between tasks in an ETL pipeline
+# Note: Requires Cloud Run service (see service/ directory)
+
+main:
+  params: [args]
+  steps:
+    - init:
+        assign:
+          - service_url: https://workflow-service-PROJECT_ID.run.app
+    - extract:
+        call: http.post
+        args:
+          url: ${service_url + "/extract"}
+          auth:
+            type: OIDC
+        result: extracted_data
+    - transform:
+        call: http.post
+        args:
+          url: ${service_url + "/transform"}
+          auth:
+            type: OIDC
+          body: ${extracted_data.body}
+        result: transformed_data
+    - load:
+        call: http.post
+        args:
+          url: ${service_url + "/load"}
+          auth:
+            type: OIDC
+          body: ${transformed_data.body}
+        result: load_result
+    - return_result:
+        return: ${load_result.body}

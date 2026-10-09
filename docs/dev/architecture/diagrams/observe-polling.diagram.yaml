@@ -1,0 +1,36 @@
+type: sequence
+title: How clients read Runs, Tasks and logs
+participants:
+  - { id: user, is: User }
+  - { id: ui, is: UI }
+  - { id: tui, is: TUI }
+  - { id: cli, is: CLI }
+  - { id: api, is: API }
+  - { id: store, is: Store }
+steps:
+  - par:
+      - when: Web UI
+        steps:
+          - { from: ui, to: api, label: "GET /api/workflows, /api/runs (on load, filter change, refresh, after a start, when the selected Run ends)" }
+          - loop: "the selected Run, every 1.2 to 7 s"
+            steps:
+              - { from: ui, to: api, label: "GET /api/runs/{id}" }
+              - { from: api, to: store, label: "Run, Tasks, Workflow tasks, Task states" }
+              - { from: api, to: ui, label: "JSON, logs, output and errors included", kind: return }
+      - when: TUI
+        steps:
+          - loop: "every 1 s (local) or 10 s (remote)"
+            steps:
+              - { from: tui, to: api, label: "GET /api/workflows, /api/runs, /api/runs/{id}" }
+              - { from: api, to: store, label: "same reads, logs included" }
+              - { from: api, to: tui, label: JSON, kind: return }
+      - when: CLI
+        steps:
+          - { from: user, to: cli, label: "czar status, czar tasks, czar logs [--follow], czar run list" }
+          - loop: "until the Run ends (with --follow, every 1 s)"
+            steps:
+              - { from: cli, to: store, label: "Run and its Tasks, logs included" }
+  - opt: GET /ws
+    steps:
+      - { from: api, to: ui, label: "run_updated and task_updated events from the API's own commands only", kind: return }
+  - { note: "GET /ws: no client in the repository subscribes", over: [ui, api] }

@@ -1,0 +1,21 @@
+title: Who writes the entities of a Run
+direction: RIGHT
+nodes:
+  - { id: api, is: API }
+  - { id: cli, is: CLI }
+  - { id: scheduler, is: Scheduler }
+  - { id: triggerer, is: Triggerer }
+  - { id: run, label: Run, icon: "lucide:table", tags: [Store] }
+  - { id: task, label: Task, icon: "lucide:table", tags: [Store] }
+  - { id: tstate, label: Task state, icon: "lucide:table", tags: [Store] }
+  - { id: djob, label: Deferred job, icon: "lucide:table", tags: [Store] }
+edges:
+  - { from: api, to: run, label: "create, cancel, pause, resume" }
+  - { from: api, to: task, label: "cancel, pause, resume" }
+  - { from: cli, to: run, label: "create, cancel, retry" }
+  - { from: cli, to: task, label: "cancel, retry resets" }
+  - { from: scheduler, to: run, label: "create, every other status" }
+  - { from: scheduler, to: task, label: "create, every other status, output, logs" }
+  - { from: scheduler, to: tstate, label: last result }
+  - { from: scheduler, to: djob, label: create }
+  - { from: triggerer, to: djob, label: "polling, completed, failed" }

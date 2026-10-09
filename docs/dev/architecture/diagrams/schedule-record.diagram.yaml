@@ -1,0 +1,18 @@
+type: sequence
+title: Recording reports
+participants:
+  - { id: exec, is: Executor }
+  - { id: trig, is: Triggerer }
+  - { id: sched, is: Scheduler }
+  - { id: store, is: Store }
+steps:
+  - { from: exec, to: sched, label: "StatusUpdates: running, log, progress, success, failed", kind: async }
+  - { from: trig, to: sched, label: a Deferred job ended, kind: async }
+  - { from: sched, to: store, label: "statuses, outputs, retries, logs, progress, Task states" }
+  - { from: sched, to: exec, label: "task Hooks, in the background" }
+  - opt: a Task failed for good
+    steps:
+      - { from: sched, to: store, label: "its waiting dependents failed, down the graph" }
+  - opt: at most every 5 s
+    steps:
+      - { from: sched, to: store, label: fail Tasks past their timeout }

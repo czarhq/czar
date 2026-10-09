@@ -1,0 +1,161 @@
+name: polyglot
+description: Multi-language workflow demonstrating Python, library, process, and Wasm executors
+
+# Workflow-level variables.  Override at runtime via:
+#   CLI: czar run --var BUILD_PROFILE=release
+#   Env: CZAR_VAR_BUILD_PROFILE=release just example polyglot
+vars:
+  BUILD_PROFILE: debug
+
+types:
+  NumbersOutput:
+    numbers: [int]
+  RustLibraryOutput:
+    tripled: [int]
+    sum: int
+  RustProcessSdkOutput:
+    total: int
+    tripled: [int]
+  RustProcessMacroOutput:
+    total: int
+    tripled: [int]
+    task_name: str
+  RustProcessRawOutput:
+    sum: int
+    count: int
+  RustWasmOutput:
+    max: int
+    count: int
+    squared: [int]
+  RustWasmCliOutput:
+    min: int
+    count: int
+    even_numbers: [int]
+  FinalOutput:
+    summary: str
+    total: int
+    macro_total: int
+    macro_task_name: str
+    final_value: int
+    tripled_numbers: [int]
+    raw_sum: int
+    raw_count: int
+    embedded_wasm_max: int
+    embedded_wasm_count: int
+    cli_wasm_min: int
+    cli_wasm_even_numbers: [int]
+
+tasks:
+  py_generate:
+    executor: python
+    file: polyglot.py
+    function: generate_numbers
+    input_type:
+      count: int
+    output_type: types.NumbersOutput
+    inputs:
+      count:
+        const: 5
+
+  rust_library_native:
+    executor: library
+    # Native library executor: host-specific shared library with direct in-process calls.
+    # Build these artifacts ahead of time with `just example-build polyglot`.
+    file: rust_tasks/target/${{ vars.BUILD_PROFILE }}/libpolyglot_rust_lib.${{ platform.lib_ext }}
+    depends_on: [py_generate]
+    input_type:
+      py_generate: types.NumbersOutput
+    output_type: types.RustLibraryOutput
+    inputs:
+      py_generate:
+        ref: tasks.py_generate.output
+
+  rust_process_sdk:
+    executor: process
+    # Process executor: native binary that uses czar::run_task.
+    command: rust_tasks/target/${{ vars.BUILD_PROFILE }}/process_sdk
+    depends_on: [rust_library_native]
+    input_type:
+      rust_library: types.RustLibraryOutput
+    output_type: types.RustProcessSdkOutput
+    inputs:
+      rust_library:
+        ref: tasks.rust_library_native.output
+
+  rust_process_macro:
+    executor: process
+    # Process executor: native binary that uses the Rust #[task] authoring macro.
+    command: rust_tasks/target/${{ vars.BUILD_PROFILE }}/process_macro
+    depends_on: [rust_library_native]
+    input_type:
+      rust_library: types.RustLibraryOutput
+    output_type: types.RustProcessMacroOutput
+    inputs:
+      rust_library:
+        ref: tasks.rust_library_native.output
+
+  rust_process_raw:
+    executor: process
+    # Process executor: native binary that manually handles CZAR_INPUT_JSON / CZAR_OUTPUT.
+    command: rust_tasks/target/${{ vars.BUILD_PROFILE }}/process_raw
+    depends_on: [py_generate]
+    input_type:
+      py_generate: types.NumbersOutput
+    output_type: types.RustProcessRawOutput
+    inputs:
+      py_generate:
+        ref: tasks.py_generate.output
+
+  rust_wasm_embedded:
+    executor: wasm
+    # Embedded / library-style wasm: in-process via wasmtime and exported functions.
+    file: rust_tasks/target/wasm32-unknown-unknown/${{ vars.BUILD_PROFILE }}/polyglot_rust_lib.wasm
+    depends_on: [py_generate]
+    input_type:
+      py_generate: types.NumbersOutput
+    output_type: types.RustWasmOutput
+    inputs:
+      py_generate:
+        ref: tasks.py_generate.output
+
+  rust_wasm_cli:
+    executor: wasm
+    # CLI / WASI-style wasm: spawned through an external runtime such as `wasmtime run`.
+    file: rust_tasks/target/wasm32-wasip1/${{ vars.BUILD_PROFILE }}/wasm_cli.wasm
+    wasm_mode: cli
+    depends_on: [py_generate]
+    input_type:
+      py_generate: types.NumbersOutput
+    output_type: types.RustWasmCliOutput
+    inputs:
+      py_generate:
+        ref: tasks.py_generate.output
+
+  py_format:
+    executor: python
+    file: polyglot.py
+    function: format_result
+    depends_on: [rust_process_sdk, rust_process_macro, rust_process_raw, rust_wasm_embedded, rust_wasm_cli]
+    input_type:
+      multiplier: int
+      rust_process_sdk: types.RustProcessSdkOutput
+      rust_process_macro: types.RustProcessMacroOutput
+      rust_process_raw:
+        sum: int
+        count: int
+      rust_wasm_embedded: types.RustWasmOutput
+      rust_wasm_cli: types.RustWasmCliOutput
+    output_type: types.FinalOutput
+    inputs:
+      multiplier:
+        const: 10
+      rust_process_sdk:
+        ref: tasks.rust_process_sdk.output
+      rust_process_macro:
+        ref: tasks.rust_process_macro.output
+      rust_process_raw:
+        ref: tasks.rust_process_raw.output
+      rust_wasm_embedded:
+        ref: tasks.rust_wasm_embedded.output
+      rust_wasm_cli:
+        ref: tasks.rust_wasm_cli.output

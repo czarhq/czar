@@ -1,0 +1,12 @@
+# Heavy load test - stress test with many concurrent tasks
+# Time-bounded: measures tasks/sec over a 10s window
+workflows: 2000
+tasks_per_workflow: 10
+duration: 0.05
+benchmark_duration_secs: 10
+
+scheduler:
+  poll_interval_secs: 0.1
+  max_tasks_per_batch: 5000
+  max_concurrent_dispatches: 500
+  max_concurrent_status_checks: 1000

@@ -1,0 +1,6 @@
+tasks:
+  process:
+    executor: cloudrun
+    job: my-process-job
+    parallel: 1000
+    parallel_mode: cloud_run_tasks

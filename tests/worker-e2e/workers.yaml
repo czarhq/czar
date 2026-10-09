@@ -1,0 +1,2 @@
+workers:
+  - url: http://worker:8081

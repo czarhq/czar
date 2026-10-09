@@ -1,0 +1,19 @@
+title: How czar-executors picks an executor
+direction: RIGHT
+nodes:
+  - { id: sched, is: Scheduler }
+  - { id: em, label: ExecutorManager, detail: "picks one per Task", icon: "lucide:split" }
+  - { id: kinds, label: Executors, detail: "each reports StatusUpdates", kind: process, icon: "lucide:cog" }
+  - { id: pe, in: kinds, label: ProcessExecutor, detail: "process, python, container", icon: "lucide:cpu", tags: [one, made at startup] }
+  - { id: le, in: kinds, label: LibraryExecutor, detail: "a shared library, in-process", icon: "lucide:library", tags: [one, made at startup] }
+  - { id: we, in: kinds, label: WasmExecutor, detail: "embedded or CLI Wasm", icon: "devicon:wasm", tags: [one, made at startup] }
+  - { id: cr, in: kinds, label: CloudRunClient, detail: "Cloud Run jobs", icon: "gcp:cloud-run", tags: [one per project and region] }
+  - { id: wk, in: kinds, label: WorkerExecutor, detail: "a remote Worker, over HTTP", icon: "lucide:container", tags: [made per call] }
+edges:
+  - { from: sched, to: em, label: "the Task's executor" }
+  - { from: em, to: pe, label: "process, python, container" }
+  - { from: em, to: le, label: library }
+  - { from: em, to: we, label: wasm }
+  - { from: em, to: cr, label: cloudrun }
+  - { from: em, to: wk, label: from a Worker }
+  - { from: kinds, to: sched, label: "StatusUpdates, over a channel", style: dashed }

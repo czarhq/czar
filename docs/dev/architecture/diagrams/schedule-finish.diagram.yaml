@@ -1,0 +1,16 @@
+type: sequence
+title: Completing Runs
+participants:
+  - { id: sched, is: Scheduler }
+  - { id: store, is: Store }
+  - { id: exec, is: Executor }
+  - { id: notify, is: Notify }
+steps:
+  - { from: sched, to: store, label: Task statuses of the Runs touched this tick }
+  - opt: "every Task is success, failed or skipped"
+    steps:
+      - { from: sched, to: store, label: "Run success, or failed if any Task failed" }
+      - { from: sched, to: exec, label: "run.success or run.failed Hooks, in the background" }
+  - opt: the Run failed and notifications are configured
+    steps:
+      - { from: sched, to: notify, label: "Slack webhook, sendmail" }

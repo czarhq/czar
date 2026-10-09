@@ -1,0 +1,3 @@
+inputs:
+  counts:
+    ref: tasks.process.output.processed  # → [12, 9, ...]

@@ -1,0 +1,3 @@
+vars:
+  BUILD_PROFILE: debug
+  JOB_NAME: nightly-users

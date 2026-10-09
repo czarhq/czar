@@ -1,0 +1,14 @@
+name: analytics
+version: 1.0.0
+profile: czar_example
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+
+models:
+  analytics:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

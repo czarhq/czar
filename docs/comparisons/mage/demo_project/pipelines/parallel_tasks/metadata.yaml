@@ -1,0 +1,39 @@
+blocks:
+- all_upstream_blocks_executed: true
+  downstream_blocks:
+  - combine_data
+  name: fetch_users
+  status: not_executed
+  type: data_loader
+  upstream_blocks: []
+  uuid: fetch_users
+- all_upstream_blocks_executed: true
+  downstream_blocks:
+  - combine_data
+  name: fetch_orders
+  status: not_executed
+  type: data_loader
+  upstream_blocks: []
+  uuid: fetch_orders
+- all_upstream_blocks_executed: true
+  downstream_blocks:
+  - combine_data
+  name: fetch_products
+  status: not_executed
+  type: data_loader
+  upstream_blocks: []
+  uuid: fetch_products
+- all_upstream_blocks_executed: false
+  downstream_blocks: []
+  name: combine_data
+  status: not_executed
+  type: data_exporter
+  upstream_blocks:
+  - fetch_users
+  - fetch_orders
+  - fetch_products
+  uuid: combine_data
+name: parallel_tasks
+type: python
+uuid: parallel_tasks
+widgets: []

@@ -1,0 +1,26 @@
+type: sequence
+title: Poll a Deferred job
+participants:
+  - { id: trig, is: Triggerer }
+  - { id: service, is: Service }
+  - { id: store, is: Store }
+  - { id: sched, is: Scheduler }
+steps:
+  - { note: "one open job, polled through the tracker for its service_type", over: [trig, service] }
+  - { from: trig, to: service, label: status? }
+  - { from: trig, to: store, label: last polled time }
+  - alt:
+      - when: still running
+        steps:
+          - { from: trig, to: store, label: Deferred job polling }
+      - when: completed
+        steps:
+          - { from: trig, to: store, label: Deferred job completed }
+          - { from: trig, to: sched, label: "the job ended, success", kind: async }
+      - when: "failed, or the poll returned an error"
+        steps:
+          - { from: trig, to: store, label: Deferred job failed }
+          - { from: trig, to: sched, label: "the job ended, failed, with the error", kind: async }
+      - when: the poll timed out after 30 s
+        steps:
+          - { from: trig, to: trig, label: try again next cycle }

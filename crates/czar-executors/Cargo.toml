@@ -1,0 +1,55 @@
+[package]
+name = "czar-executors"
+version.workspace = true
+edition.workspace = true
+description = "Executor backends used by Czar for local and cloud task execution"
+readme = "README.md"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+keywords = ["workflow", "orchestration", "executors"]
+categories = ["development-tools"]
+
+[lib]
+name = "czar_executors"
+
+[features]
+default = ["process", "library", "wasm"]
+
+# Executor backends
+process = []
+cloudrun = ["dep:gcp_auth", "dep:reqwest"]
+library = ["dep:libloading"]
+wasm = []
+wasm-embedded = ["wasm", "dep:wasmtime"]
+worker = ["dep:reqwest"]
+fargate = []  # Future
+lambda = []   # Future
+
+[dependencies]
+czar-core = { workspace = true }
+
+# Core async dependencies
+async-trait = { workspace = true }
+uuid = { workspace = true, features = ["v4"] }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+tokio = { version = "1", default-features = false, features = ["process", "sync", "time", "fs", "rt", "macros", "io-util"] }
+gcp_auth = { workspace = true, optional = true }
+reqwest = { workspace = true, features = ["json"], optional = true }
+libloading = { version = "0.9.0", optional = true }
+wasmtime = { version = "48.0.5", optional = true, default-features = false, features = ["cranelift", "runtime"] }
+
+[dev-dependencies]
+chrono = { workspace = true }
+tempfile = "3"
+
+[lints]
+workspace = true

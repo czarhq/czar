@@ -1,0 +1,8 @@
+tasks:
+  dbt.staging.stg_users: {}
+
+  test_stg_users:
+    executor: dbt-test
+    config:
+      models: [staging.stg_users]
+    depends_on: [dbt.staging.stg_users]

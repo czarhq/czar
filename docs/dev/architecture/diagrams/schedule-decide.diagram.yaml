@@ -1,0 +1,25 @@
+title: Skip, fail or dispatch
+direction: DOWN
+nodes:
+  - { id: depskip, shape: decision, label: "a dependency\nskipped?" }
+  - { id: skip1, shape: state, label: skipped, tone: quiet }
+  - { id: depfail, shape: decision, label: "a dependency failed\nor cancelled, and no\non_failure: run?" }
+  - { id: fail1, shape: state, label: failed, tone: bad }
+  - { id: when, shape: decision, label: "when?" }
+  - { id: skip2, shape: state, label: "skipped (false)\nfailed (error)", tone: quiet }
+  - { id: inputs, shape: decision, label: "inputs and env\ntemplates resolve?" }
+  - { id: fail3, shape: state, label: failed, tone: bad }
+  - { id: exec, shape: decision, label: "Executor found,\nexecute succeeds?" }
+  - { id: fail4, shape: state, label: failed, tone: bad }
+  - { id: dispatched, shape: state, label: dispatched, tone: good }
+edges:
+  - { from: depskip, to: depfail, label: "no", main: true }
+  - { from: depfail, to: when, label: "no", main: true }
+  - { from: when, to: inputs, label: "true, or none", main: true }
+  - { from: inputs, to: exec, label: "yes", main: true }
+  - { from: exec, to: dispatched, label: "yes", main: true }
+  - { from: depskip, to: skip1, label: "yes" }
+  - { from: depfail, to: fail1, label: "yes" }
+  - { from: when, to: skip2, label: "false or error" }
+  - { from: inputs, to: fail3, label: "no" }
+  - { from: exec, to: fail4, label: "no" }

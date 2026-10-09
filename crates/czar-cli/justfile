@@ -1,0 +1,348 @@
+# Rust Cloud Run Orchestrator - Justfile
+# Run `just --list` to see all available commands
+
+# Show all available commands
+default:
+    @just --list
+
+# ============================================================================
+# Build & Development
+# ============================================================================
+
+# Build the project (debug)
+[group('build')]
+build:
+    cargo build
+
+# Build release version
+[group('build')]
+build-release:
+    cargo build --release
+
+# Check compilation without building
+[group('build')]
+check:
+    cargo check
+
+# Run tests
+[group('build')]
+test:
+    cargo test
+
+# Format code
+[group('build')]
+fmt:
+    cargo fmt
+
+# Run clippy linter
+[group('build')]
+lint:
+    cargo clippy
+
+# Development workflow - rebuild and restart
+[group('build')]
+dev: build run
+
+# ============================================================================
+# Database
+# ============================================================================
+
+# Start PostgreSQL with Docker Compose
+[group('database')]
+db-start:
+    docker compose up -d postgres
+    @echo "Waiting for PostgreSQL to be ready..."
+    @sleep 3
+
+# Stop PostgreSQL
+[group('database')]
+db-stop:
+    docker compose down
+
+# Initialize database (run migrations)
+[group('database')]
+db-init: db-start
+    cargo run --bin czar -- init
+
+# Reset database (WARNING: deletes all data)
+[group('database')]
+db-reset: db-stop
+    docker compose down -v
+    @echo "Database reset complete"
+
+# Show database tables
+[group('database')]
+db-tables:
+    docker compose exec postgres psql -U postgres -d orchestrator -c "\dt"
+
+# Query workflows table
+[group('database')]
+db-workflows:
+    docker compose exec postgres psql -U postgres -d orchestrator -c "SELECT id, name, cloud_run_job_name, executor_type FROM workflows;"
+
+# Query runs table
+[group('database')]
+db-runs:
+    docker compose exec postgres psql -U postgres -d orchestrator -c "SELECT id, workflow_id, status, created_at FROM runs ORDER BY created_at DESC LIMIT 10;"
+
+# Query tasks for a specific run
+[group('database')]
+db-tasks run_id:
+    docker compose exec postgres psql -U postgres -d orchestrator -c "SELECT task_index, status, cloud_run_execution_name, finished_at FROM tasks WHERE run_id = '{{run_id}}' ORDER BY task_index;"
+
+# Dump canonical schema (generates schema.sql)
+[group('database')]
+dump-schema:
+    ./scripts/dump-schema.sh
+
+# ============================================================================
+# Orchestrator
+# ============================================================================
+
+# Run the orchestrator (default config)
+[group('orchestrator')]
+run: db-start
+    cargo run --bin czar -- serve
+
+# Run with optimized config (low-latency, low-memory)
+[group('orchestrator')]
+run-optimized: db-start
+    @echo "Running with optimized config (2s poll, 50 batch, 5 concurrent)"
+    RUST_LOG=info cargo run --release --bin czar -- serve
+
+# Run with high-throughput config
+[group('orchestrator')]
+run-high-throughput: db-start
+    @echo "Running with high-throughput config (5s poll, 500 batch, 50 concurrent)"
+    RUST_LOG=info cargo run --release --bin czar -- serve
+
+# ============================================================================
+# Workflows & Runs
+# ============================================================================
+
+# List all workflows
+[group('workflows')]
+workflows:
+    cargo run --bin czar -- list-workflows
+
+# Load example workflow (process executor)
+[group('workflows')]
+workflow-load-example:
+    cargo run --bin czar -- load examples/example-process.yaml 2>/dev/null || echo "Workflow 'example-process' already exists (skipped)"
+
+# Trigger a workflow
+[group('workflows')]
+trigger workflow:
+    cargo run --bin czar -- trigger {{workflow}}
+
+# Show all run statuses
+[group('workflows')]
+status:
+    cargo run --bin czar -- status
+
+# Show status of specific run
+[group('workflows')]
+status-run run_id:
+    cargo run --bin czar -- status {{run_id}}
+
+# Show runs for a workflow
+[group('workflows')]
+status-workflow workflow:
+    cargo run --bin czar -- status --workflow {{workflow}}
+
+# Show tasks for a run
+[group('workflows')]
+tasks run_id:
+    cargo run --bin czar -- tasks {{run_id}}
+
+# ============================================================================
+# Docker
+# ============================================================================
+
+# Build Docker image
+[group('docker')]
+docker-build:
+    docker build -t rust-orchestrator .
+
+# Start all services with Docker Compose
+[group('docker')]
+docker-up:
+    docker compose up -d
+    @echo "Waiting for services to start..."
+    @sleep 5
+    docker compose exec orchestrator /app/rust-orchestrator init
+
+# Stop all Docker services
+[group('docker')]
+docker-down:
+    docker compose down
+
+# Execute command in orchestrator container
+[group('docker')]
+docker-exec *ARGS:
+    docker compose exec orchestrator /app/rust-orchestrator {{ARGS}}
+
+# View orchestrator logs
+[group('docker')]
+docker-logs:
+    docker compose logs -f orchestrator
+
+# Trigger workflow in Docker
+[group('docker')]
+docker-trigger workflow:
+    docker compose exec orchestrator /app/rust-orchestrator trigger {{workflow}}
+
+# View status in Docker
+[group('docker')]
+docker-status:
+    docker compose exec orchestrator /app/rust-orchestrator status
+
+# ============================================================================
+# Testing & Setup
+# ============================================================================
+
+# Complete first-time setup
+[group('setup')]
+setup: db-start db-init test-script-create workflow-load-example
+    @echo ""
+    @echo "✓ Setup complete!"
+    @echo ""
+    @echo "Next steps:"
+    @echo "  just trigger example-process  # Trigger the example workflow"
+    @echo "  just run                      # Start the orchestrator"
+    @echo "  just status                   # Check run status"
+
+# Create test script for process executor
+[group('setup')]
+test-script-create:
+    @echo "✓ Test script already exists at test-scripts/example-task.sh"
+
+# Run end-to-end test
+[group('testing')]
+test-e2e: db-start db-init test-script-create workflow-load-example
+    ./scripts/test-e2e.sh
+
+# Run load test (100 workflows)
+[group('testing')]
+test-load: db-start db-init workflow-load-example
+    ./scripts/test-load.sh
+
+# Run a single named perf config (e.g. just perf standard, just perf cloud-1ms)
+[group('perf')]
+perf config: db-start db-init clean-data
+    cargo build --release --bin czar --bin perf-test --features perf-test
+    ../../target/release/perf-test --config {{config}}
+
+# Quick smoke test
+[group('perf')]
+perf-quick: (perf "quick")
+
+# Standard load test (100 runs, 5 tasks/run)
+[group('perf')]
+perf-standard: (perf "standard")
+
+# Heavy load test (1000 runs, 10 tasks/run)
+[group('perf')]
+perf-heavy: (perf "heavy")
+
+# Latency test (measure scheduling overhead)
+[group('perf')]
+perf-latency: (perf "latency")
+
+# Memory test (long-running concurrent tasks)
+[group('perf')]
+perf-memory: (perf "memory")
+
+# Run all cloud latency configs
+[group('perf')]
+perf-cloud: db-start db-init
+    #!/usr/bin/env bash
+    set -e
+    cargo build --release --bin czar --bin perf-test --features perf-test
+    for config in perf-configs/cloud-*.yaml; do
+        name=$(basename "$config" .yaml)
+        echo "========================================"
+        echo "Running: $name"
+        echo "========================================"
+        just clean-data
+        ../../target/release/perf-test --config "$name"
+    done
+
+# Run all performance tests
+[group('perf')]
+perf-all: db-start db-init
+    #!/usr/bin/env bash
+    set -e
+    cargo build --release --bin czar --bin perf-test --features perf-test
+    mkdir -p perf-results
+    timestamp=$(date +%Y%m%d-%H%M%S)
+    for config in perf-configs/*.yaml; do
+        name=$(basename "$config" .yaml)
+        echo ""
+        echo "========================================"
+        echo "Running performance test: $name"
+        echo "========================================"
+        just clean-data
+        output_file="perf-results/${timestamp}-${name}.txt"
+        ../../target/release/perf-test --config "$name" | tee "$output_file"
+        echo "Results saved to: $output_file"
+    done
+    echo ""
+    echo "========================================"
+    echo "All performance tests completed"
+    echo "Results saved in perf-results/${timestamp}-*.txt"
+    echo "========================================"
+
+# Run all performance tests and record results to docs/reports/perf/results.md
+[group('perf')]
+perf-record note='':
+    #!/usr/bin/env bash
+    set -e
+    just db-start db-init
+    cargo build --release --bin czar --bin perf-test --features perf-test
+    mkdir -p perf-results
+    timestamp=$(date +%Y%m%d-%H%M%S)
+    for config in perf-configs/*.yaml; do
+        name=$(basename "$config" .yaml)
+        echo ""
+        echo "========================================"
+        echo "Running performance test: $name"
+        echo "========================================"
+        just clean-data
+        output_file="perf-results/${timestamp}-${name}.txt"
+        ../../target/release/perf-test --config "$name" | tee "$output_file"
+        echo "Results saved to: $output_file"
+    done
+    echo ""
+    echo "========================================"
+    echo "All performance tests completed"
+    echo "========================================"
+    project_root="$(git -C "$(pwd)" rev-parse --show-toplevel)"
+    bash "$project_root/scripts/perf-record.sh" "perf-results/${timestamp}" "{{note}}"
+    echo "Run 'git diff docs/reports/perf/results.md' to review before committing."
+
+# ============================================================================
+# Cleanup
+# ============================================================================
+
+# Clean build artifacts
+[group('cleanup')]
+clean:
+    cargo clean
+    rm -rf target
+
+# Clean test artifacts
+[group('cleanup')]
+clean-test:
+    rm -rf test-scripts
+
+# Clean database data (keep schema)
+[group('cleanup')]
+clean-data:
+    docker compose exec postgres psql -U postgres -d orchestrator -c "DELETE FROM tasks; DELETE FROM runs;"
+    @echo "✓ Database data cleaned"
+
+# Clean everything (build + test + db)
+[group('cleanup')]
+clean-all: clean clean-test db-reset
+    @echo "✓ All cleaned"

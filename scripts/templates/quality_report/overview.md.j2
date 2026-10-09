@@ -1,0 +1,35 @@
+# Quality Report
+
+## Executive Summary
+
+- Overall status: **{{ overall_status_display }}**
+- Generated at: `{{ generated_at }}`
+- Build scope: host target `{{ environment.host_target }}` only; {{ environment.rust_target_count }} Rust target(s) installed locally
+- Build and lint: build {{ checks_by_key.build.display_status }}, lint {{ checks_by_key.lint.display_status }}, docker {{ checks_by_key.build_docker.display_status }}
+- Tests: Rust unit {{ checks_by_key.tests_rust_unit.display_status }}, Rust integration {{ checks_by_key.tests_rust_integration.display_status }}, frontend {{ checks_by_key.tests_frontend.display_status }}, client smoke {{ checks_by_key.tests_smoke.display_status }}, dev-stack smoke {{ checks_by_key.tests_smoke_dev_stack.display_status }}, example system {{ checks_by_key.examples_system.display_status }}
+- Docs and examples: docs {{ checks_by_key.docs_checks.display_status }}, example validation {{ checks_by_key.examples_validate.display_status }}, runnable examples {{ examples.status_counts.get('PASS', 0) }}/{{ examples.total }} PASS
+- Dependencies: licenses {{ checks_by_key.deps_licenses.display_status }}, freshness {{ checks_by_key.deps_freshness.display_status }}, vulnerabilities {{ checks_by_key.deps_vulns.display_status }}{% if license_summary.python_projects %}; third-party packages: Python {{ license_summary.python_packages }}, JS {{ license_summary.js_packages }}{% endif %}.
+- Benchmarks: baseline summary {{ checks_by_key.benchmark_summary.display_status }}{% if perf.status == 'available' %}; latest recorded baseline from {{ perf.latest_date }}{% endif %}
+- Frontend perf: {{ checks_by_key.perf_frontend.display_status }}{% if frontend_perf.status == 'available' %}; performance {{ frontend_perf.scores.get('performance', 'n/a') }}/100, LCP {{ frontend_perf.metrics.lcp_ms }} ms, CLS {{ frontend_perf.metrics.cls }}{% endif %}
+
+## Memory Evidence
+
+| Check | Start Available | Min Available | End Available | Source |
+|---|---:|---:|---:|---|
+{% for check in checks -%}
+| {{ check.title }} | {{ check.memory_start_available or 'unavailable' }} | {{ check.memory_min_available or 'unavailable' }} | {{ check.memory_end_available or 'unavailable' }} | {{ check.memory_source }} |
+{% endfor %}
+
+## Sections
+
+| Area | Status | Detail |
+|---|---|---|
+{% for category in categories -%}
+| {{ category.title }} | {{ category.display_status }} | [{{ category.detail }}]({{ category.detail }}) |
+{% endfor %}
+
+## Raw Logs
+
+{% for check in checks -%}
+- [{{ check.log_path }}]({{ check.log_path }})
+{% endfor %}

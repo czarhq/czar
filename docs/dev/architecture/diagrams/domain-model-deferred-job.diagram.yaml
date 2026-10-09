@@ -1,0 +1,16 @@
+title: Deferred job lifecycle
+direction: RIGHT
+nodes:
+  - { id: begin, shape: start, label: start }
+  - { id: pending, shape: state, label: pending }
+  - { id: polling, shape: state, label: polling }
+  - { id: completed, shape: state, label: completed, tone: good }
+  - { id: failed, shape: state, label: failed, tone: bad }
+edges:
+  - { from: begin, to: pending, label: Task hands it off }
+  - { from: pending, to: polling, label: still running }
+  - { from: polling, to: polling, label: still running }
+  - { from: pending, to: completed, label: done }
+  - { from: polling, to: completed, label: done }
+  - { from: pending, to: failed, label: "failed, or poll error" }
+  - { from: polling, to: failed, label: "failed, or poll error" }

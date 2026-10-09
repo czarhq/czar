@@ -1,0 +1,58 @@
+name: conditional_branching
+
+types:
+  QualityScore:
+    score: float
+  Partitions:
+    partitions: [str]
+
+tasks:
+  check_data_quality:
+    executor: python
+    file: conditional_branching.py
+    function: check_data_quality
+    output_type: types.QualityScore
+
+  process_high_quality:
+    executor: python
+    file: conditional_branching.py
+    function: process_high_quality
+    depends_on: [check_data_quality]
+    when: tasks.check_data_quality.output.score > 0.8
+
+  clean_data:
+    executor: python
+    file: conditional_branching.py
+    function: clean_data
+    depends_on: [check_data_quality]
+    when: tasks.check_data_quality.output.score <= 0.8
+
+  process_low_quality:
+    executor: python
+    file: conditional_branching.py
+    function: process_low_quality
+    depends_on: [clean_data]
+
+  get_partitions:
+    executor: python
+    file: conditional_branching.py
+    function: get_partitions
+    output_type: types.Partitions
+
+  process_partition:
+    executor: python
+    file: conditional_branching.py
+    function: process_partition
+    depends_on: [get_partitions]
+    foreach: get_partitions.partitions
+    input_type:
+      partition: str
+    inputs:
+      partition:
+        ref: foreach.item
+
+  combine_results:
+    executor: python
+    file: conditional_branching.py
+    function: combine_results
+    depends_on: [process_partition]

@@ -1,0 +1,13 @@
+tasks:
+  fetch_data:
+    image: .../legacy-fetcher:v1
+    command: ["python", "fetch.py"]
+    output:
+      from_file: /output/result.json
+
+  process:
+    image: .../processor:v1
+    command: ["python", "process.py"]
+    depends_on: [fetch_data]
+    input:
+      to_file: /input/data.json

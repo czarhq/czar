@@ -1,0 +1,8 @@
+types:
+  User:
+    id: int
+    name: str
+    email: str
+
+  ExtractOutput:
+    users: list[User]

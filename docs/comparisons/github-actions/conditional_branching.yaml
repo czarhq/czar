@@ -1,0 +1,91 @@
+name: Conditional Branching
+
+on: [workflow_dispatch]
+
+jobs:
+  check_data_quality:
+    runs-on: ubuntu-latest
+    outputs:
+      score: ${{ steps.check.outputs.score }}
+      is_high_quality: ${{ steps.check.outputs.is_high_quality }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check quality
+        id: check
+        run: |
+          python scripts/check_quality.py > output.txt
+          score=$(grep '^score=' output.txt | cut -d'=' -f2)
+          is_high=$(grep '^is_high_quality=' output.txt | cut -d'=' -f2)
+          echo "score=$score" >> $GITHUB_OUTPUT
+          echo "is_high_quality=$is_high" >> $GITHUB_OUTPUT
+
+  process_high_quality:
+    runs-on: ubuntu-latest
+    needs: check_data_quality
+    if: needs.check_data_quality.outputs.is_high_quality == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Process high quality data
+        run: python scripts/process_high_quality.py
+
+  clean_data:
+    runs-on: ubuntu-latest
+    needs: check_data_quality
+    if: needs.check_data_quality.outputs.is_high_quality == 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Clean data
+        run: python scripts/clean_data.py
+
+  process_low_quality:
+    runs-on: ubuntu-latest
+    needs: clean_data
+    if: needs.check_data_quality.outputs.is_high_quality == 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Process low quality data
+        run: python scripts/process_low_quality.py
+
+  process_partitions:
+    runs-on: ubuntu-latest
+    needs: [process_high_quality, process_low_quality]
+    if: always() && (needs.process_high_quality.result == 'success' || needs.process_low_quality.result == 'success')
+    strategy:
+      matrix:
+        partition: [partition_1, partition_2, partition_3]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Process partition
+        run: python scripts/process_partition.py ${{ matrix.partition }}
+
+  combine_results:
+    runs-on: ubuntu-latest
+    needs: process_partitions
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Combine results
+        run: python scripts/combine_results.py

@@ -1,0 +1,6 @@
+# czar.yaml
+executors:
+  python:
+    type: python
+  rust:
+    type: rust

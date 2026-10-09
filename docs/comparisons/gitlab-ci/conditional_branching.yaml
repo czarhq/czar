@@ -1,0 +1,70 @@
+stages:
+  - quality_check
+  - processing
+  - partitions
+  - combine
+
+check_data_quality:
+  stage: quality_check
+  image: python:3.12-slim
+  script:
+    - python scripts/check_quality.py
+  artifacts:
+    paths:
+      - quality_score.txt
+
+process_high_quality:
+  stage: processing
+  image: python:3.12-slim
+  script:
+    - python scripts/process_high_quality.py
+  needs:
+    - check_data_quality
+  rules:
+    - if: '$CI_COMMIT_BRANCH'
+      when: manual
+      allow_failure: true
+  # Note: GitLab CI doesn't natively support conditional execution based on artifact content
+  # This would require a manual trigger or custom scripting to check the quality score
+
+clean_data:
+  stage: processing
+  image: python:3.12-slim
+  script:
+    - python scripts/clean_data.py
+  needs:
+    - check_data_quality
+  artifacts:
+    paths:
+      - quality_score.txt
+
+process_low_quality:
+  stage: processing
+  image: python:3.12-slim
+  script:
+    - python scripts/process_low_quality.py
+  needs:
+    - clean_data
+
+# Partition processing using parallel:matrix
+process_partitions:
+  stage: partitions
+  image: python:3.12-slim
+  parallel:
+    matrix:
+      - PARTITION: [partition_1, partition_2, partition_3]
+  script:
+    - python scripts/process_partition.py $PARTITION
+  needs:
+    - job: process_high_quality
+      optional: true
+    - job: process_low_quality
+      optional: true
+
+combine_results:
+  stage: combine
+  image: python:3.12-slim
+  script:
+    - python scripts/combine_results.py
+  needs:
+    - process_partitions

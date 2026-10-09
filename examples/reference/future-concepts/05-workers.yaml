@@ -1,0 +1,15 @@
+# workers.yaml
+workers:
+  extract:
+    service_account: czar-extract@project.iam.gserviceaccount.com
+    vpc_connector: projects/x/locations/y/connectors/external
+    cpu: 1
+    memory: 2Gi
+
+  transform:
+    service_account: czar-transform@project.iam.gserviceaccount.com
+    vpc_connector: projects/x/locations/y/connectors/internal
+    cpu: 2
+    memory: 4Gi
+
+default: extract

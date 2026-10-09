@@ -1,0 +1,32 @@
+name: simple_args
+
+tasks:
+  add_math:
+    executor: python
+    file: simple_args.py
+    function: add
+    timeout: 10
+    input_type:
+      a: int
+      b: int
+    output_type: int
+    inputs:
+      a:
+        const: 5
+      b:
+        const: 10
+
+  greet_user:
+    executor: python
+    file: simple_args.py
+    function: greet
+    depends_on: [add_math]
+    input_type:
+      name: str
+      shout: bool
+    output_type: str
+    inputs:
+      name:
+        const: Czar User
+      shout:
+        const: true

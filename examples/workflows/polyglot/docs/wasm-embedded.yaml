@@ -1,0 +1,4 @@
+rust_wasm_embedded:
+  executor: wasm
+  # Embedded / library-style wasm: in-process via wasmtime and exported functions.
+  file: rust_tasks/target/wasm32-unknown-unknown/${{ vars.BUILD_PROFILE }}/polyglot_rust_lib.wasm

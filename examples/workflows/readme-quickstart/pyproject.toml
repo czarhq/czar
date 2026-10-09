@@ -1,0 +1,15 @@
+[tool.uv]
+package = false
+exclude-newer = "7 days"
+
+[project]
+name = "czar-readme-quickstart"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "czar",
+  "requests>=2.32.0",
+]
+
+[tool.uv.sources]
+czar = { path = "../../../python-sdk", editable = true }

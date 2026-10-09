@@ -1,0 +1,32 @@
+[package]
+name = "czar-store-sqlite"
+version.workspace = true
+edition.workspace = true
+description = "SQLite state storage for Czar"
+readme = "README.md"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+keywords = ["workflow", "orchestration", "database", "sqlite"]
+categories = ["database", "development-tools"]
+
+[lib]
+name = "czar_store_sqlite"
+
+[dependencies]
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+chrono = { workspace = true, default-features = false, features = ["clock", "serde"] }
+czar-core = { workspace = true, features = ["sqlx"] }
+serde_json = { workspace = true }
+sqlx = { workspace = true, features = ["runtime-tokio", "tls-rustls", "sqlite", "macros", "migrate", "uuid", "chrono", "json"] }
+uuid = { workspace = true, features = ["v4"] }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+
+[lints]
+workspace = true

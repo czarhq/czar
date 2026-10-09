@@ -1,0 +1,28 @@
+type: sequence
+title: Reading a child process's output
+participants:
+  - { id: proc, is: Proc }
+  - { id: exec, is: Executor }
+  - { id: sched, is: Scheduler }
+steps:
+  - par:
+      - when: stdout
+        steps:
+          - { from: proc, to: exec, label: a line, kind: return }
+          - alt:
+              - when: "CZAR_OUTPUT:{json}"
+                steps:
+                  - { from: exec, to: exec, label: "keep as the output, the last valid one wins" }
+              - when: "CZAR_PROGRESS:{json}"
+                steps:
+                  - { from: exec, to: sched, label: progress, kind: async }
+              - when: "CZAR_METRIC:{json}"
+                steps:
+                  - { from: exec, to: sched, label: "log line \"M ...\"", kind: async }
+              - when: "anything else, or invalid JSON"
+                steps:
+                  - { from: exec, to: sched, label: "log line \"O ...\"", kind: async }
+      - when: stderr
+        steps:
+          - { from: proc, to: exec, label: a line, kind: return }
+          - { from: exec, to: sched, label: "log line \"E ...\"", kind: async }

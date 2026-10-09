@@ -1,0 +1,29 @@
+# Build And Lint
+
+| Check | Status | Exit | Duration | Log |
+|---|---|---:|---:|---|
+| `{{ checks_by_key.build.commands[0] }}` | {{ checks_by_key.build.status }} | {{ checks_by_key.build.exit_code }} | {{ checks_by_key.build.duration_s }}s | [{{ checks_by_key.build.log_path }}]({{ checks_by_key.build.log_path }}) |
+| `{{ checks_by_key.lint.commands[0] }}` | {{ checks_by_key.lint.status }} | {{ checks_by_key.lint.exit_code }} | {{ checks_by_key.lint.duration_s }}s | [{{ checks_by_key.lint.log_path }}]({{ checks_by_key.lint.log_path }}) |
+| `{{ checks_by_key.build_docker.commands[0] }}` | {{ checks_by_key.build_docker.status }} | {{ checks_by_key.build_docker.exit_code }} | {{ checks_by_key.build_docker.duration_s }}s | [{{ checks_by_key.build_docker.log_path }}]({{ checks_by_key.build_docker.log_path }}) |
+
+## Notes
+
+- `just build` verifies the workspace build on the current host platform.
+- `just lint` covers Rust checks, Clippy, frontend build, LOC, doc snippets, and example wiring validation.
+- `just quality-docker` builds the standalone CLI and web Docker images, then runs them.
+
+{% if checks_by_key.lint.exit_code != 0 %}
+## Lint Failure Tail
+
+```text
+{{ log_tail['lint'] }}
+```
+{% endif %}
+
+{% if checks_by_key.build_docker.exit_code != 0 %}
+## Docker Failure Tail
+
+```text
+{{ log_tail['build_docker'] }}
+```
+{% endif %}

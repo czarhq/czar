@@ -1,0 +1,20 @@
+title: The entities
+direction: DOWN
+nodes:
+  - { id: worker, shape: entity, label: Worker registration, fields: ["url                text", "token              text: or token_env", "poll_interval_secs int"] }
+  - { id: workflow, shape: entity, label: Workflow, fields: ["name                text UK", "schedule            text", "schedule_enabled    bool", "next_scheduled_at   time", "current_snapshot_id uuid FK", "task_params         json: flows, worker url"] }
+  - { id: workflow_task, shape: entity, label: Workflow task, fields: ["task_name     text: x, x[0], __hook__:y", "executor_type text", "depends_on    list", "params        json: command, inputs, env, retries, timeout"] }
+  - { id: snapshot, shape: entity, label: Snapshot, fields: ["content_hash        text UK: sha256 of the task rows", "tasks_json          json", "source_yaml         text"] }
+  - { id: run, shape: entity, label: Run, fields: ["status               text", "triggered_by         text: manual, ui, schedule, cli-execute", "snapshot_id          uuid FK", "task_selection       json: selection and inputs", "error                text"] }
+  - { id: task, shape: entity, label: Task, fields: ["task_name            text", "status               text", "attempts             int", "max_retries          int", "retry_at             time", "execution_name       text", "output               json", "logs                 text", "progress             json"] }
+  - { id: deferred_job, shape: entity, label: Deferred job, fields: ["service_type         text: bigquery, dataproc, cloudrun, custom_http", "job_id               text", "job_data             json", "status               text", "last_polled_at       time"] }
+  - { id: task_state, shape: entity, label: Task state, fields: ["task_name   text", "last_status text", "last_output json", "last_run_id uuid"] }
+edges:
+  - { from: worker, to: workflow, label: "syncs (0 or 1 to 0+)" }
+  - { from: workflow, to: workflow_task, label: "current version (1+)" }
+  - { from: workflow, to: snapshot, label: "every version (1+)" }
+  - { from: workflow, to: run, label: "runs of (0+)" }
+  - { from: snapshot, to: run, label: "pinned by (0+)" }
+  - { from: run, to: task, label: "has (0+)" }
+  - { from: task, to: deferred_job, label: "waits on (0+)" }
+  - { from: workflow, to: task_state, label: "last result per task name (0+)" }

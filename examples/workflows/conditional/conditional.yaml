@@ -1,0 +1,83 @@
+name: conditional_demo
+
+# Demonstrates conditional task execution using `when:` expressions.
+#
+# Workflow:
+#   1. check_quality  — always runs, outputs a score and a category
+#   2. process_high   — runs only when score > 0.8  (high quality branch)
+#   3. process_low    — runs only when score <= 0.8  (low quality branch)
+#   4. notify         — always runs after check_quality, reports the outcome
+#
+# `process_high` and `process_low` form an exclusive conditional branch:
+# exactly one of them will execute depending on the quality score. `notify`
+# always runs (no `when:`) and receives the check result to summarise it.
+
+types:
+  QualityResult:
+    score: float
+    category: str
+    item_count: int
+  ProcessResult:
+    processed_count: int
+    route: str
+
+tasks:
+  check_quality:
+    executor: python
+    file: conditional.py
+    function: check_quality
+    input_type:
+      dataset: str
+    output_type: types.QualityResult
+    inputs:
+      dataset:
+        const: "sample_dataset"
+
+  # HIGH QUALITY BRANCH — runs only when score is above threshold
+  process_high:
+    executor: python
+    file: conditional.py
+    function: process_high_quality
+    depends_on: [check_quality]
+    when: "tasks.check_quality.output.score > 0.8"
+    input_type:
+      score: float
+      item_count: int
+    output_type: types.ProcessResult
+    inputs:
+      score:
+        ref: tasks.check_quality.output.score
+      item_count:
+        ref: tasks.check_quality.output.item_count
+
+  # LOW QUALITY BRANCH — runs only when score is at or below threshold
+  process_low:
+    executor: python
+    file: conditional.py
+    function: process_low_quality
+    depends_on: [check_quality]
+    when: "tasks.check_quality.output.score <= 0.8"
+    input_type:
+      score: float
+      item_count: int
+    output_type: types.ProcessResult
+    inputs:
+      score:
+        ref: tasks.check_quality.output.score
+      item_count:
+        ref: tasks.check_quality.output.item_count
+
+  # ALWAYS RUNS — `when:` is omitted so this task is never skipped
+  notify:
+    executor: python
+    file: conditional.py
+    function: notify
+    depends_on: [check_quality]
+    input_type:
+      score: float
+      category: str
+    inputs:
+      score:
+        ref: tasks.check_quality.output.score
+      category:
+        ref: tasks.check_quality.output.category

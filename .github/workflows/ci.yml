@@ -1,0 +1,157 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@1.95.0
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+          cache-dependency-path: crates/czar-web-react/pnpm-lock.yaml
+
+      - name: Install frontend dependencies
+        run: cd crates/czar-web-react && pnpm install --frozen-lockfile
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.9.24"
+          python-version: "3.12"
+
+      - name: Install just
+        uses: taiki-e/install-action@v2
+        with:
+          tool: just
+
+      - name: Install cargo-deny
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-deny
+
+      - name: Install cargo-outdated
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-outdated
+
+      - name: Lint
+        run: just lint
+
+      - name: Upload lint reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-reports
+          path: .czar/reports/
+          if-no-files-found: ignore
+
+  feature-matrix:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: postgres
+            commands: |
+              cargo check -p czar-store --features postgres
+              cargo check -p czar-web --features postgres
+              cargo check -p czar-cli --features postgres,process,library
+          - name: sqlite
+            commands: |
+              cargo check -p czar-store --features sqlite
+              cargo check -p czar-web --no-default-features --features sqlite
+              cargo check -p czar-cli --no-default-features --features sqlite,process,library
+          - name: file
+            commands: |
+              cargo check -p czar-store --features file
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@1.95.0
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Check feature combo (${{ matrix.name }})
+        run: ${{ matrix.commands }}
+
+  crate-age:
+    # A hand-run `cargo update` can pull a crate younger than the 7-day rule;
+    # cargo itself only enforces `global-min-publish-age` from 1.100.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: New crates are at least 7 days old
+        run: python3 scripts/deps-age-check.py "origin/${{ github.base_ref }}"
+
+  publish-prep:
+    runs-on: ubuntu-latest
+    needs: [lint, feature-matrix]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      # publish-prep.sh builds the web UI into czar-web first.
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Run publish prep checks
+        run: ./scripts/publish-prep.sh
+
+      - name: Run publish dry-run checks
+        if: ${{ vars.CZAR_RUN_PUBLISH_DRY_RUN == '1' }}
+        run: CZAR_RUN_PUBLISH_DRY_RUN=1 ./scripts/publish-prep.sh

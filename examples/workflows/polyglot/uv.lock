@@ -1,0 +1,12 @@
+version = 1
+revision = 3
+requires-python = ">=3.12"
+
+[options]
+exclude-newer = "2026-05-14T23:52:49.796013597Z"
+exclude-newer-span = "P7D"
+
+[[package]]
+name = "czar-example-polyglot"
+version = "0.1.0"
+source = { virtual = "." }

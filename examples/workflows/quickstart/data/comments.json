@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "postId": 1,
+    "name": "Alice",
+    "email": "Alice@example.com",
+    "body": "Nice first post!"
+  },
+  {
+    "id": 2,
+    "postId": 1,
+    "name": "Bob",
+    "email": "bob@example.com",
+    "body": "Looking forward to more"
+  },
+  {
+    "id": 3,
+    "postId": 2,
+    "name": "Carol",
+    "email": "carol@example.com",
+    "body": "Speed matters!"
+  }
+]

@@ -1,0 +1,26 @@
+title: The building blocks
+direction: DOWN
+nodes:
+  - { id: clients, label: Clients, icon: "lucide:users", kind: boundary }
+  - { id: ui, in: clients, is: UI, link: "../building-blocks.md#web-ui" }
+  - { id: tui, in: clients, is: TUI, link: "../building-blocks.md#tui" }
+  - { id: cli, in: clients, is: CLI, link: "../building-blocks.md#cli" }
+  - { id: serve, is: Server, label: czar serve, kind: process }
+  - { id: api, in: serve, is: API, link: "../building-blocks.md#api" }
+  - { id: compiler, in: serve, is: Compiler, link: "../building-blocks.md#compiler" }
+  - { id: scheduler, in: serve, is: Scheduler, link: "../building-blocks.md#scheduler" }
+  - { id: triggerer, in: serve, is: Triggerer, link: "../building-blocks.md#triggerer" }
+  - { id: executor, in: serve, is: Executor, link: "../building-blocks.md#executor" }
+  - { id: store, is: Store, link: "../building-blocks.md#store" }
+edges:
+  - { from: ui, to: api, label: HTTP }
+  - { from: tui, to: api, label: HTTP }
+  - { from: cli, to: store, label: SQL }
+  - { from: api, to: compiler, label: apply YAML }
+  - { from: compiler, to: store, label: SQL }
+  - { from: api, to: store, label: SQL }
+  - { from: scheduler, to: store, label: SQL, both: true }
+  - { from: triggerer, to: store, label: SQL, both: true }
+  - { from: scheduler, to: executor, label: execute }
+  - { from: executor, to: scheduler, label: reports, style: dashed }
+  - { from: triggerer, to: scheduler, label: job ended, style: dashed }

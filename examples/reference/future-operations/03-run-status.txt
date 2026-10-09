@@ -1,0 +1,15 @@
+$ czar run status abc-123-def
+Run: abc-123-def
+Workflow: my_etl
+Status: running
+Started: 2024-01-15 10:30:00
+Tasks: 3/10 completed
+
+┌──────────────┬───────────┬─────────────────────┐
+│ Task         │ Status    │ Duration            │
+├──────────────┼───────────┼─────────────────────┤
+│ extract      │ success   │ 45s                 │
+│ transform    │ success   │ 1m 23s              │
+│ load         │ running   │ 34s (ongoing)       │
+│ validate     │ pending   │ -                   │
+└──────────────┴───────────┴─────────────────────┘

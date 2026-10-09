@@ -1,0 +1,82 @@
+id: conditional_branching
+namespace: comparison
+
+tasks:
+  - id: check_data_quality
+    type: io.kestra.plugin.scripts.python.Commands
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+    containerImage: python:3.11-slim
+    namespaceFiles:
+      enabled: true
+    beforeCommands:
+      - pip install kestra
+    commands:
+      - python scripts/conditional_branching.py check_data_quality
+
+  - id: process_based_on_quality
+    type: io.kestra.plugin.core.flow.If
+    condition: "{{ outputs.check_data_quality.vars.quality_score > 0.8 }}"
+    then:
+      - id: process_high_quality
+        type: io.kestra.plugin.scripts.python.Commands
+        taskRunner:
+          type: io.kestra.plugin.scripts.runner.docker.Docker
+        containerImage: python:3.11-slim
+        namespaceFiles:
+          enabled: true
+        commands:
+          - python scripts/conditional_branching.py process_high_quality
+    else:
+      - id: clean_data
+        type: io.kestra.plugin.scripts.python.Commands
+        taskRunner:
+          type: io.kestra.plugin.scripts.runner.docker.Docker
+        containerImage: python:3.11-slim
+        namespaceFiles:
+          enabled: true
+        commands:
+          - python scripts/conditional_branching.py clean_data
+
+  - id: get_partitions
+    type: io.kestra.plugin.core.flow.Parallel
+    tasks:
+      - id: process_partition_1
+        type: io.kestra.plugin.scripts.python.Commands
+        taskRunner:
+          type: io.kestra.plugin.scripts.runner.docker.Docker
+        containerImage: python:3.11-slim
+        namespaceFiles:
+          enabled: true
+        commands:
+          - python scripts/conditional_branching.py process_partition_partition_1
+
+      - id: process_partition_2
+        type: io.kestra.plugin.scripts.python.Commands
+        taskRunner:
+          type: io.kestra.plugin.scripts.runner.docker.Docker
+        containerImage: python:3.11-slim
+        namespaceFiles:
+          enabled: true
+        commands:
+          - python scripts/conditional_branching.py process_partition_partition_2
+
+      - id: process_partition_3
+        type: io.kestra.plugin.scripts.python.Commands
+        taskRunner:
+          type: io.kestra.plugin.scripts.runner.docker.Docker
+        containerImage: python:3.11-slim
+        namespaceFiles:
+          enabled: true
+        commands:
+          - python scripts/conditional_branching.py process_partition_partition_3
+
+  - id: combine_results
+    type: io.kestra.plugin.scripts.python.Commands
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+    containerImage: python:3.11-slim
+    namespaceFiles:
+      enabled: true
+    commands:
+      - python scripts/conditional_branching.py combine_results

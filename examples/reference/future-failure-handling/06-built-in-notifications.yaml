@@ -1,0 +1,7 @@
+# czar.yaml
+notifications:
+  on_failure:
+    email:
+      to: [team@example.com]
+    slack:
+      webhook_url: ${SLACK_WEBHOOK_URL}

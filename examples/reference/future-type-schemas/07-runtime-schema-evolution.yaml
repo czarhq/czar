@@ -1,0 +1,7 @@
+types:
+  User:
+    id: int
+    name: str
+    email: str
+    # New field (optional to maintain compatibility)
+    phone: str | None

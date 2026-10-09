@@ -1,0 +1,14 @@
+tasks:
+  dbt_seed:
+    executor: dbt-seed
+    config:
+      select: [country_codes, product_categories]
+
+  dbt.staging.stg_users:
+    depends_on: [dbt_seed]
+
+  snapshot_users:
+    executor: dbt-snapshot
+    config:
+      select: [users_snapshot]
+    depends_on: [dbt.staging.stg_users]

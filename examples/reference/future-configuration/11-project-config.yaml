@@ -1,0 +1,8 @@
+# API settings
+api:
+  url: http://localhost:8080
+  auth:
+    type: api_key
+    header: X-API-Key
+    value:
+      secret: projects/my-project/secrets/api-key

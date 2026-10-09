@@ -1,0 +1,14 @@
+type: sequence
+title: Retry a Run
+participants:
+  - { id: user, is: User }
+  - { id: cli, is: CLI }
+  - { id: store, is: Store }
+  - { id: sched, is: Scheduler }
+steps:
+  - { from: user, to: cli, label: "czar run retry RUN [--task NAME]" }
+  - { from: cli, to: store, label: "read the Run's Tasks" }
+  - { from: cli, to: store, label: roots and their ended dependents back to pending }
+  - { from: cli, to: store, label: Run pending }
+  - { from: sched, to: store, label: "next tick: Run running again, run.start Hooks" }
+  - { from: sched, to: store, label: the reset Tasks are picked like any ready Task }

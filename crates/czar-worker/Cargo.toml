@@ -1,0 +1,49 @@
+[package]
+name = "czar-worker"
+version.workspace = true
+edition.workspace = true
+description = "Stateless worker server for Czar compile/execute task paths"
+readme = "README.md"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+keywords = ["workflow", "orchestration", "worker"]
+categories = ["network-programming", "development-tools"]
+
+[features]
+default = ["local-executors"]
+process = ["czar-executors/process"]
+library = ["czar-executors/library"]
+wasm = ["czar-executors/wasm"]
+wasm-embedded = ["wasm", "czar-executors/wasm-embedded"]
+local-executors = ["process", "library", "wasm-embedded"]
+
+[dependencies]
+czar-core = { workspace = true, features = ["sqlx"] }
+czar-executors = { workspace = true }
+
+axum = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+clap = { workspace = true, features = ["env"] }
+subtle = { workspace = true }
+uuid = { workspace = true }
+async-trait = { workspace = true }
+
+[[bin]]
+name = "czar-worker"
+path = "src/main.rs"
+
+[dev-dependencies]
+reqwest = { workspace = true }
+
+[lints]
+workspace = true

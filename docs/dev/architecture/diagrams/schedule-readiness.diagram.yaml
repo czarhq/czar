@@ -1,0 +1,17 @@
+title: Fan-out and concurrency come first
+direction: DOWN
+nodes:
+  - { id: picked, label: A ready Task from the Store, icon: "lucide:list-todo" }
+  - { id: fan, shape: decision, label: "parallel or foreach\nfrom an upstream output?" }
+  - { id: expand, label: "Replace with x[0] .. x[n-1],\ndispatch next tick", icon: "lucide:split" }
+  - { id: fanerr, label: "Error: the whole batch waits", icon: "lucide:circle-x" }
+  - { id: limit, shape: decision, label: "its parallel group already\nhas concurrency members out?" }
+  - { id: hold, label: Stay pending this tick, icon: "lucide:pause" }
+  - { id: decide, label: "Decide: skip, fail or dispatch", icon: "lucide:workflow", link: "../flows/schedule.md#deciding-a-tasks-fate" }
+edges:
+  - { from: picked, to: fan, main: true }
+  - { from: fan, to: limit, label: "no", main: true }
+  - { from: limit, to: decide, label: "no", main: true }
+  - { from: fan, to: expand, label: "yes, expands" }
+  - { from: fan, to: fanerr, label: "yes, cannot expand" }
+  - { from: limit, to: hold, label: "yes" }

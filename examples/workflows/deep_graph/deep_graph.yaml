@@ -1,0 +1,11 @@
+generate:
+  kind: python
+  script: generate.py
+  refresh: true
+  args:
+    - --workflow-name
+    - deep_graph
+    - --layers
+    - 100
+    - --nodes-per-layer
+    - 10

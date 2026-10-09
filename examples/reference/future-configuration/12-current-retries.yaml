@@ -1,0 +1,5 @@
+tasks:
+  flaky_task:
+    executor: python
+    file: tasks_flaky.py
+    retries: 3

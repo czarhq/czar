@@ -1,0 +1,6 @@
+poll_interval_secs: 0.5
+max_tasks_per_batch: 100
+max_concurrent_dispatches: 10
+max_concurrent_status_checks: 50
+db_pool_size: 10
+enable_triggerer: true

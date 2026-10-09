@@ -1,0 +1,45 @@
+# Environment
+
+- Generated at: `{{ environment.generated_at }}`
+- Git branch: `{{ environment.git_branch }}`
+- Git commit: `{{ environment.git_commit }}`
+- Working tree entries: {{ environment.git_status | length }}
+
+## Host Machine
+
+- Hostname: `{{ environment.host_specs.hostname }}`
+- Platform: `{{ environment.host_specs.platform }}`
+- OS / kernel: `{{ environment.host_specs.os }} / {{ environment.host_specs.kernel }}`
+- Architecture: `{{ environment.host_specs.architecture }}`
+- CPU: `{{ environment.host_specs.cpu_model }}`
+- CPU topology: {% if environment.host_specs.physical_cores %}{{ environment.host_specs.physical_cores }} physical core(s), {% endif %}{{ environment.host_specs.logical_cpus }} logical CPU(s)
+- Memory: {% if environment.host_specs.memory_total %}{{ environment.host_specs.memory_total }}{% else %}unknown{% endif %}
+
+## Host Build Scope
+
+- Host Rust target: `{{ environment.host_target }}`
+- Installed Rust targets:
+
+```text
+{{ environment.rust_targets | join('\n') }}
+```
+
+Only the host target was exercised by this report. Extra installed targets indicate potential multi-platform build targets, not verified cross-builds.
+
+## Tool Versions
+
+```text
+{{ environment.rustc_vv }}
+---
+{{ environment.cargo_version }}
+{{ environment.python_version }}
+{{ environment.uv_version }}
+pnpm {{ environment.pnpm_version }}
+{{ environment.just_version }}
+```
+
+## Git Status
+
+```text
+{{ environment.git_status | join('\n') }}
+```

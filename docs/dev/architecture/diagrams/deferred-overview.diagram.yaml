@@ -1,0 +1,10 @@
+title: Deferred jobs, in three parts
+direction: RIGHT
+nodes:
+  - { id: handoff, label: Hand off, detail: "the Task's output lists jobs,\nDeferred jobs pending", icon: "lucide:send", link: "../flows/deferred.md#hand-off" }
+  - { id: poll, label: Poll, detail: "the Triggerer asks each\nJob service every 10 s", icon: "lucide:refresh-cw", link: "../flows/deferred.md#poll" }
+  - { id: finish, label: Finish, detail: "the Scheduler ends the Task,\nsuccess or failed", icon: "lucide:flag", link: "../flows/deferred.md#finish" }
+edges:
+  - { from: handoff, to: poll }
+  - { from: poll, to: finish, label: a job ended }
+  - { from: poll, to: poll, label: still running }

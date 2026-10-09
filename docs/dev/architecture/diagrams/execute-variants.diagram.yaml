@@ -1,0 +1,13 @@
+title: Four ways to run a Task
+direction: RIGHT
+nodes:
+  - { id: exec, is: Executor }
+  - { id: child, label: A child process, detail: "process, python, container,\ncustom, wasm cli", icon: "lucide:cpu", link: ../flows/execute-local.md }
+  - { id: inline, label: A call inside czar, detail: "library, embedded wasm", icon: "lucide:library", link: "../flows/execute-local.md#library" }
+  - { id: worker, label: A request to a Worker, detail: "any kind, for a Workflow\nsynced from a Worker", icon: "lucide:container", link: ../flows/execute-worker.md }
+  - { id: cloud, label: A Cloud Run job, detail: cloudrun, icon: "gcp:cloud-run", link: ../flows/execute-cloud-run.md }
+edges:
+  - { from: exec, to: child, label: returns at once }
+  - { from: exec, to: inline, label: returns when the call ends }
+  - { from: exec, to: worker, label: returns when the Worker answers }
+  - { from: exec, to: cloud, label: returns once started }

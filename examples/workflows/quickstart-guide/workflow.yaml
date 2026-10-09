@@ -1,0 +1,36 @@
+# workflows/data_pipeline.yaml
+name: data_pipeline
+
+types:
+  FetchOutput:
+    data: str
+  SummaryOutput:
+    total_chars: int
+    total_lines: int
+    non_empty_lines: int
+
+tasks:
+  fetch:
+    executor: python
+    file: tasks_fetch.py
+    env:
+      SOURCE_LABEL: demo-api
+    input_type:
+      url: str
+    output_type: types.FetchOutput
+    inputs:
+      url:
+        const: https://jsonplaceholder.typicode.com/posts/1
+    timeout: 300
+    retries: 3
+
+  summarize:
+    executor: python
+    file: tasks_summarize.py
+    depends_on: [fetch]
+    input_type:
+      fetch: types.FetchOutput
+    output_type: types.SummaryOutput
+    inputs:
+      fetch:
+        ref: tasks.fetch.output

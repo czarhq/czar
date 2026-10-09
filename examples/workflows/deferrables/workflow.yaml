@@ -1,0 +1,30 @@
+name: deferrables_demo
+description: Demonstration of deferrables for long-running external jobs
+
+types:
+  ProcessResultsOutput:
+    message: str
+    upstream_tasks: [str]
+
+tasks:
+  bigquery_job:
+    executor: python
+    file: tasks.py
+    function: simulate_bigquery_job
+
+  custom_http_job:
+    executor: python
+    file: tasks.py
+    function: simulate_custom_http_job
+
+  multiple_jobs:
+    executor: python
+    file: tasks.py
+    function: multiple_jobs
+
+  process_results:
+    executor: python
+    file: tasks.py
+    function: process_results
+    depends_on: [bigquery_job]
+    output_type: types.ProcessResultsOutput

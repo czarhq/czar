@@ -1,0 +1,10 @@
+type: sequence
+title: Finish a deferred Task
+participants:
+  - { id: sched, is: Scheduler }
+  - { id: store, is: Store }
+steps:
+  - { note: "on the next tick, for each ended job", over: sched }
+  - { from: sched, to: store, label: "Task success, or failed with the job's error" }
+  - { from: sched, to: store, label: Task state }
+  - { from: sched, to: store, label: complete the Run if every Task has ended }

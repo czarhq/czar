@@ -1,0 +1,4 @@
+tasks:
+  query_top_customers:
+    executor: sqlite_query
+    config_file: queries/top_customers.json

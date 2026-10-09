@@ -1,0 +1,6 @@
+tasks:
+  flaky_api_call:
+    executor: python
+    file: tasks/api.py
+    retries: 3
+    retry_delay: 60

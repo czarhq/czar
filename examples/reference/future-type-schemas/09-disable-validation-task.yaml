@@ -1,0 +1,6 @@
+tasks:
+  extract:
+    executor: python
+    file: tasks/extract.py
+    output_type: types.ExtractOutput
+    validate_output: false

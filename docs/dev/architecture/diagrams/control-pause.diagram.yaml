@@ -1,0 +1,20 @@
+type: sequence
+title: Pause and resume
+participants:
+  - { id: user, is: User }
+  - { id: ui, is: UI }
+  - { id: api, is: API }
+  - { id: store, is: Store }
+steps:
+  - alt:
+      - when: pause or resume a Run (Web UI or TUI)
+        steps:
+          - { from: user, to: ui, label: Pause or Resume }
+          - { from: ui, to: api, label: "POST /api/runs/{id}/pause or /resume" }
+          - { from: api, to: store, label: "read the Run, check its status (409 if not allowed)" }
+          - { from: api, to: store, label: "Run paused, or running (pending if it has no Tasks yet)" }
+      - when: pause or resume a Task (API only)
+        steps:
+          - { from: user, to: api, label: "POST /api/tasks/{id}/pause or /resume" }
+          - { from: api, to: store, label: "read the Task, check its status (409 if not allowed)" }
+          - { from: api, to: store, label: "Task paused, or pending again" }

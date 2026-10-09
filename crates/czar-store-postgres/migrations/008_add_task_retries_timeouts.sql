@@ -1,0 +1,11 @@
+ALTER TABLE tasks
+    ADD COLUMN attempts INT NOT NULL DEFAULT 0;
+
+ALTER TABLE tasks
+    ADD COLUMN max_retries INT NOT NULL DEFAULT 0;
+
+ALTER TABLE tasks
+    ADD COLUMN timeout_seconds INT;
+
+ALTER TABLE tasks
+    ADD COLUMN retry_at TIMESTAMPTZ;

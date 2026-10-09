@@ -1,0 +1,65 @@
+[project]
+name = "czar-scripts"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "jinja2>=3.1.6,<4",
+  "rich>=15.0.0,<16",
+]
+
+[dependency-groups]
+dev = [
+  "pyright>=1.1.403,<2",
+  "ruff>=0.16.8,<0.17",
+]
+
+[tool.uv]
+exclude-newer = "7 days"
+package = false
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+src = ["."]
+
+[tool.ruff.lint]
+select = [
+  "E",
+  "F",
+  "W",
+  "B",
+  "I",
+  "UP",
+  "SIM",
+  "C4",
+  "ANN",
+]
+ignore = [
+  "ANN401",
+]
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "strict"
+include = [
+  "benchmark_summary.py",
+  "examples.py",
+  "quality_report.py",
+  "quality_report_support.py",
+  "check-doc-examples.py",
+  "check-links.py",
+  "check-loc.py",
+  "check-review.py",
+  "check-workspace-lints.py",
+  "docker_smoke.py",
+  "smoke_stack.py",
+  "smoke_support.py",
+  "smoke_test.py",
+]
+reportMissingTypeStubs = false
+reportUnknownArgumentType = true
+reportUnknownLambdaType = true
+reportUnknownMemberType = true
+reportUnknownParameterType = true
+reportUnknownVariableType = true
+reportMissingTypeArgument = true

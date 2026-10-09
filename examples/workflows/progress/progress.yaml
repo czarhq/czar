@@ -1,0 +1,49 @@
+name: progress_demo
+
+types:
+  ProcessResult:
+    processed: int
+    total: int
+    summary: str
+
+tasks:
+  process_items:
+    executor: python
+    file: progress.py
+    function: process_items
+    input_type:
+      item_count: int
+      step_delay: float
+    output_type: types.ProcessResult
+    inputs:
+      item_count:
+        const: 20
+      step_delay:
+        const: 0.3
+
+  process_items_tqdm:
+    executor: python
+    file: progress.py
+    function: process_items_tqdm
+    input_type:
+      item_count: int
+      step_delay: float
+    output_type: types.ProcessResult
+    inputs:
+      item_count:
+        const: 12
+      step_delay:
+        const: 0.25
+
+  summarize:
+    executor: python
+    file: progress.py
+    function: summarize
+    depends_on: [process_items]
+    input_type:
+      result: types.ProcessResult
+    output_type:
+      message: str
+    inputs:
+      result:
+        ref: tasks.process_items.output

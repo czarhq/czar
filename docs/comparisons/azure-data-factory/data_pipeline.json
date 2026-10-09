@@ -1,0 +1,78 @@
+{
+  "name": "Tier2DataPassing",
+  "properties": {
+    "activities": [
+      {
+        "name": "extract",
+        "type": "WebActivity",
+        "typeProperties": {
+          "url": "https://api.example.com/data",
+          "method": "GET"
+        },
+        "outputs": [
+          {
+            "referenceName": "ExtractedData",
+            "type": "DatasetReference"
+          }
+        ]
+      },
+      {
+        "name": "transform",
+        "type": "DatabricksNotebook",
+        "dependsOn": [
+          {
+            "activity": "extract",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "typeProperties": {
+          "notebookPath": "/transform",
+          "baseParameters": {
+            "records": "@activity('extract').output.records",
+            "source": "@activity('extract').output.source"
+          }
+        },
+        "linkedServiceName": {
+          "referenceName": "DatabricksLinkedService",
+          "type": "LinkedServiceReference"
+        }
+      },
+      {
+        "name": "load",
+        "type": "Copy",
+        "dependsOn": [
+          {
+            "activity": "transform",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "typeProperties": {
+          "source": {
+            "type": "BlobSource",
+            "blobColumnSeparators": ","
+          },
+          "sink": {
+            "type": "SqlSink",
+            "writeBatchSize": 10000
+          },
+          "dataIntegrationUnits": 2
+        },
+        "inputs": [
+          {
+            "referenceName": "TransformedData",
+            "type": "DatasetReference",
+            "parameters": {
+              "records": "@activity('transform').output.runOutput.records"
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "referenceName": "DestinationDataset",
+            "type": "DatasetReference"
+          }
+        ]
+      }
+    ]
+  }
+}

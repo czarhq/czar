@@ -1,0 +1,17 @@
+import:
+  - dbt: ./transform
+
+tasks:
+  extract:
+    executor: python
+    file: tasks/extract.py
+
+  dbt.staging.stg_users:
+    depends_on: [extract]
+
+  dbt.marts.order_facts: {}
+
+  export:
+    executor: python
+    file: tasks/export.py
+    depends_on: [dbt.marts.order_facts]

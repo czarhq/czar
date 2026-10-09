@@ -1,0 +1,50 @@
+[package]
+name = "czar-store"
+version.workspace = true
+edition.workspace = true
+description = "State facade and shared storage helpers for Czar"
+readme = "README.md"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+keywords = ["workflow", "orchestration", "database"]
+categories = ["database", "development-tools"]
+
+[lib]
+name = "czar_store"
+
+[features]
+default = []
+postgres = ["dep:czar-store-postgres", "czar-core/sqlx"]
+sqlite = ["dep:czar-store-sqlite", "czar-core/sqlx"]
+file = ["dep:czar-store-file"]
+d1 = ["dep:czar-store-d1"]
+
+[dependencies]
+async-trait = { workspace = true }
+tokio = { version = "1", default-features = false, features = ["fs", "sync"] }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+czar-core = { workspace = true }
+chrono = { workspace = true, default-features = false, features = ["clock", "serde"] }
+uuid = { workspace = true, features = ["v4"] }
+anyhow = { workspace = true }
+fs2 = { workspace = true }
+serde_yaml = { workspace = true }
+
+# Optional: Database backends
+czar-store-file = { workspace = true, optional = true }
+czar-store-sqlite = { workspace = true, optional = true }
+czar-store-postgres = { workspace = true, optional = true }
+czar-store-d1 = { workspace = true, optional = true }
+
+[dev-dependencies]
+indexmap = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+url = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,29 @@
+title: One Scheduler tick
+direction: DOWN
+nodes:
+  - { id: start, label: tick, icon: "lucide:refresh-cw" }
+  - { id: sched, shape: decision, label: "30 s since the\nlast schedule check?" }
+  - { id: due, label: "Start due schedules:", detail: new pending Runs, icon: "lucide:calendar-clock" }
+  - { id: runs, label: "Pending Runs:", detail: create their Tasks, icon: "lucide:list-plus" }
+  - { id: tasks, label: "Ready Tasks:", detail: dispatch to Executors, icon: "lucide:send" }
+  - { id: reports, label: "Executor reports:", detail: "record status, output, logs;\nend Runs that are done", icon: "lucide:inbox" }
+  - { id: jobs, label: "Triggerer results:", detail: end Tasks whose jobs ended, icon: "lucide:alarm-clock" }
+  - { id: timeouts, shape: decision, label: "5 s since the\nlast timeout check?" }
+  - { id: fail, label: "Fail Tasks past\ntheir timeout", icon: "lucide:timer-off" }
+  - { id: idle, shape: decision, label: "did any\nwork?" }
+  - { id: wait, label: "Sleep 0.5 s, or until", detail: an Executor reports, icon: "lucide:hourglass" }
+edges:
+  - { from: start, to: sched, main: true }
+  - { from: sched, to: due, label: "yes" }
+  - { from: sched, to: runs, label: "no", main: true }
+  - { from: due, to: runs }
+  - { from: runs, to: tasks, main: true }
+  - { from: tasks, to: reports, main: true }
+  - { from: reports, to: jobs, main: true }
+  - { from: jobs, to: timeouts, main: true }
+  - { from: timeouts, to: fail, label: "yes" }
+  - { from: timeouts, to: idle, label: "no", main: true }
+  - { from: fail, to: idle }
+  - { from: idle, to: start, label: "yes" }
+  - { from: idle, to: wait, label: "no", main: true }
+  - { from: wait, to: start }

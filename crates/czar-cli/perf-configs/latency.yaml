@@ -1,0 +1,12 @@
+# Latency test - measure scheduling overhead with very short tasks
+# Time-bounded: measures tasks/sec over a 10s window
+workflows: 5000
+tasks_per_workflow: 5
+duration: 0.01
+benchmark_duration_secs: 10
+
+scheduler:
+  poll_interval_secs: 0.5
+  max_tasks_per_batch: 500
+  max_concurrent_dispatches: 100
+  max_concurrent_status_checks: 200

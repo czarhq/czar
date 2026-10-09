@@ -1,0 +1,10 @@
+tasks:
+  summarize:
+    executor: python
+    file: tasks_summarize.py
+    input_type:
+      fetch:
+        data: str
+    inputs:
+      fetch:
+        ref: tasks.fetch.output

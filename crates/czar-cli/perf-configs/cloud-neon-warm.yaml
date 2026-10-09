@@ -1,0 +1,15 @@
+# Neon serverless Postgres (warm instance, same region).
+# Neon routes queries over an HTTP/WebSocket proxy layer, adding overhead vs
+# traditional Postgres. Typical warm round-trip: ~5-10ms P50.
+# Time-bounded: measures tasks/sec over a 10s window
+workflows: 500
+tasks_per_workflow: 5
+duration: 0.05
+benchmark_duration_secs: 10
+db_extra_latency_ms: 5
+
+scheduler:
+  poll_interval_secs: 1
+  max_tasks_per_batch: 200
+  max_concurrent_dispatches: 50
+  max_concurrent_status_checks: 100

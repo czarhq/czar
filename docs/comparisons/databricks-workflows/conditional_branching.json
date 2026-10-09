@@ -1,0 +1,88 @@
+{
+  "name": "tier3_conditionals_loops",
+  "tasks": [
+    {
+      "task_key": "check_data_quality",
+      "notebook_task": {
+        "notebook_path": "/Workspace/notebooks/check_data_quality",
+        "source": "WORKSPACE"
+      }
+    },
+    {
+      "task_key": "quality_branch",
+      "depends_on": [
+        {"task_key": "check_data_quality"}
+      ],
+      "condition_task": {
+        "op": "GREATER_THAN",
+        "left": "{{tasks.check_data_quality.values.quality_score}}",
+        "right": "0.8"
+      }
+    },
+    {
+      "task_key": "process_high_quality",
+      "depends_on": [
+        {"task_key": "quality_branch", "outcome": "true"}
+      ],
+      "notebook_task": {
+        "notebook_path": "/Workspace/notebooks/process_high_quality",
+        "source": "WORKSPACE"
+      }
+    },
+    {
+      "task_key": "clean_data",
+      "depends_on": [
+        {"task_key": "quality_branch", "outcome": "false"}
+      ],
+      "notebook_task": {
+        "notebook_path": "/Workspace/notebooks/clean_data",
+        "source": "WORKSPACE"
+      }
+    },
+    {
+      "task_key": "process_low_quality",
+      "depends_on": [
+        {"task_key": "clean_data"}
+      ],
+      "notebook_task": {
+        "notebook_path": "/Workspace/notebooks/process_low_quality",
+        "source": "WORKSPACE"
+      }
+    },
+    {
+      "task_key": "process_partitions",
+      "depends_on": [
+        {"task_key": "process_high_quality"},
+        {"task_key": "process_low_quality"}
+      ],
+      "for_each_task": {
+        "inputs": "[\"partition_1\", \"partition_2\", \"partition_3\"]",
+        "concurrency": 3,
+        "task": {
+          "task_key": "process_partition",
+          "notebook_task": {
+            "notebook_path": "/Workspace/notebooks/process_partition",
+            "source": "WORKSPACE",
+            "base_parameters": {
+              "partition": "{{input}}"
+            }
+          }
+        }
+      }
+    },
+    {
+      "task_key": "combine_results",
+      "depends_on": [
+        {"task_key": "process_partitions"}
+      ],
+      "notebook_task": {
+        "notebook_path": "/Workspace/notebooks/combine_results",
+        "source": "WORKSPACE"
+      }
+    }
+  ],
+  "comments": {
+    "check_data_quality_notebook": "quality_score = 0.6; dbutils.notebook.exit(json.dumps({'quality_score': quality_score}))",
+    "note": "condition_task evaluates the condition and downstream tasks depend on outcome (true/false)"
+  }
+}

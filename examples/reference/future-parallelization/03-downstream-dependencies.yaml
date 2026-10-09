@@ -1,0 +1,17 @@
+tasks:
+  process:
+    executor: python
+    file: tasks/process.py
+    parallel: 4
+    output_type:
+      processed: int
+
+  aggregate:
+    executor: python
+    file: tasks/aggregate.py
+    depends_on: [process]
+    input_type:
+      process: [{processed: int}]
+    inputs:
+      process:
+        ref: tasks.process.output

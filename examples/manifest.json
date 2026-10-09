@@ -1,0 +1,200 @@
+{
+  "examples": [
+    {
+      "name": "branches",
+      "dir": "examples/workflows/branches",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["branches.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "conditional",
+      "dir": "examples/workflows/conditional",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["conditional.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "container-first-class",
+      "dir": "examples/workflows/container-first-class",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["workflow.yaml"] },
+      "run": {
+        "enabled": false,
+        "reason": "Requires a local Docker or Podman runtime and a pullable container image."
+      }
+    },
+    {
+      "name": "custom-executor",
+      "dir": "examples/workflows/custom-executor",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["workflow.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "dbt-first-class",
+      "dir": "examples/workflows/dbt-first-class",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["workflow.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "deep_graph",
+      "dir": "examples/workflows/deep_graph",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["deep_graph.yaml"] },
+      "run": {
+        "enabled": false,
+        "reason": "Large generated frontend/performance fixture; validate the workflow shape without executing every process task in routine quality checks."
+      }
+    },
+    {
+      "name": "deferrables",
+      "dir": "examples/workflows/deferrables",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["workflow.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "demo",
+      "dir": "examples/workflows/demo",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["demo.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "fast",
+      "dir": "examples/workflows/fast",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["fast.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "parallel",
+      "dir": "examples/workflows/parallel",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["parallel.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "polyglot",
+      "dir": "examples/workflows/polyglot",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["polyglot.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "progress",
+      "dir": "examples/workflows/progress",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["progress.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "quickstart",
+      "dir": "examples/workflows/quickstart",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["elt_pipeline.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "quickstart-guide",
+      "dir": "examples/workflows/quickstart-guide",
+      "kind": "docs_reference",
+      "validation": { "kind": "docs" },
+      "run": {
+        "enabled": false,
+        "reason": "Docs reference bundle with illustrative SDK wrappers; validated via docs lint, not executed."
+      }
+    },
+    {
+      "name": "readme-quickstart",
+      "dir": "examples/workflows/readme-quickstart",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["workflow.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "retries",
+      "dir": "examples/workflows/retries",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["retries.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "simple",
+      "dir": "examples/workflows/simple",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["simple.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "simple_args",
+      "dir": "examples/workflows/simple_args",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["simple_args.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "tutorial-elt-pipeline",
+      "dir": "examples/workflows/tutorial-elt-pipeline",
+      "kind": "docs_reference",
+      "validation": { "kind": "docs" },
+      "run": {
+        "enabled": false,
+        "reason": "Docs reference bundle with illustrative SDK wrappers; validated via docs lint, not executed."
+      }
+    },
+    {
+      "name": "wide_graph",
+      "dir": "examples/workflows/wide_graph",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["wide_graph.yaml"] },
+      "run": {
+        "enabled": false,
+        "reason": "Large generated frontend/performance fixture; validate the workflow shape without executing every process task in routine quality checks."
+      }
+    },
+    {
+      "name": "workflow-schema-reference",
+      "dir": "examples/workflows/workflow-schema-reference",
+      "kind": "docs_reference",
+      "validation": { "kind": "docs" },
+      "run": {
+        "enabled": false,
+        "reason": "Schema fragment reference files are validated via docs lint, not executed as standalone workflows."
+      }
+    },
+    {
+      "name": "local-deployment",
+      "dir": "examples/deployments/local",
+      "kind": "deployment",
+      "validation": { "kind": "docs" },
+      "run": {
+        "enabled": false,
+        "reason": "Deployment walkthrough; its snippets are validated via docs lint."
+      }
+    },
+    {
+      "name": "comparisons-czar-parallel-tasks",
+      "dir": "docs/comparisons/czar",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["parallel_tasks.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "comparisons-czar-data-pipeline",
+      "dir": "docs/comparisons/czar",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["data_pipeline.yaml"] },
+      "run": { "enabled": true }
+    },
+    {
+      "name": "comparisons-czar-conditional-branching",
+      "dir": "docs/comparisons/czar",
+      "kind": "workflow",
+      "validation": { "kind": "workflow", "files": ["conditional_branching.yaml"] },
+      "run": { "enabled": true }
+    }
+  ]
+}

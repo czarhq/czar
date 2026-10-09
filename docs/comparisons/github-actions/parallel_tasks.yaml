@@ -1,0 +1,49 @@
+name: Parallel Tasks
+
+on: [workflow_dispatch]
+
+jobs:
+  fetch_users:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch users
+        run: python scripts/fetch_users.py
+
+  fetch_orders:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch orders
+        run: python scripts/fetch_orders.py
+
+  fetch_products:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch products
+        run: python scripts/fetch_products.py
+
+  combine_data:
+    runs-on: ubuntu-latest
+    needs: [fetch_users, fetch_orders, fetch_products]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Combine all data
+        run: python scripts/combine_data.py

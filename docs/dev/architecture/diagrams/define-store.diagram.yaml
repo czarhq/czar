@@ -1,0 +1,26 @@
+type: sequence
+title: Store the workflow
+participants:
+  - { id: user, is: User }
+  - { id: cli, is: CLI }
+  - { id: compiler, is: Compiler }
+  - { id: store, is: Store }
+steps:
+  - { from: compiler, to: store, label: look up the Workflow by name }
+  - alt:
+      - when: new
+        steps:
+          - { from: compiler, to: store, label: "create the Workflow, schedule disabled" }
+      - when: "exists, and the caller refuses to replace (czar load)"
+        steps:
+          - { from: compiler, to: user, label: "\"workflow already exists\"", kind: return }
+  - { from: compiler, to: store, label: flow list and registration on the Workflow }
+  - { from: compiler, to: store, label: replace all Workflow tasks and Hook rows }
+  - { from: compiler, to: store, label: "create a Snapshot, or reuse one with the same content hash" }
+  - { from: compiler, to: store, label: point the Workflow at the Snapshot }
+  - opt: worker sync
+    steps:
+      - { from: compiler, to: store, label: stamp the Workflow with the Worker URL }
+  - opt: czar workflow deploy
+    steps:
+      - { from: cli, to: store, label: store and enable the schedule from the YAML }

@@ -1,0 +1,23 @@
+name: parallel_tasks
+
+tasks:
+  fetch_users:
+    executor: python
+    file: parallel_tasks.py
+    function: fetch_users
+
+  fetch_orders:
+    executor: python
+    file: parallel_tasks.py
+    function: fetch_orders
+
+  fetch_products:
+    executor: python
+    file: parallel_tasks.py
+    function: fetch_products
+
+  combine_data:
+    executor: python
+    file: parallel_tasks.py
+    function: combine_data
+    depends_on: [fetch_users, fetch_orders, fetch_products]

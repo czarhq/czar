@@ -1,0 +1,29 @@
+[project]
+name = "kedro-examples"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "kedro>=1.1.1",
+    "kedro-viz>=12.2.0",
+]
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.408",
+    "ruff>=0.14.11",
+]
+
+[tool.kedro]
+package_name = "kedro_examples"
+project_name = "kedro-examples"
+kedro_init_version = "1.1.1"
+tools = ""
+example_pipeline = "false"
+source_dir = "src"
+
+[tool.kedro_telemetry]
+project_id = "5282ab1cdb1e41eda2894b1a46ec5dd1"
+
+[tool.uv]
+exclude-newer = "7 days"

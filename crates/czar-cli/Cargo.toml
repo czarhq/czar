@@ -1,0 +1,97 @@
+[package]
+name = "czar-cli"
+version.workspace = true
+edition.workspace = true
+description = "Czar CLI and scheduler host process"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+readme = "README.md"
+keywords = ["workflow", "orchestration", "scheduler", "cli"]
+categories = ["command-line-utilities", "development-tools"]
+# Only what building the command needs; the Docker, compose and perf files
+# are for working on czar from the repository.
+exclude = [
+  "perf-results/**",
+  "perf-configs/**",
+  "scripts/**",
+  "Dockerfile",
+  "Dockerfile.dev",
+  "docker-compose.yml",
+  "docker-compose.dev.yml",
+  "justfile",
+]
+
+[[bin]]
+name = "czar"
+path = "src/main.rs"
+
+[[bin]]
+name = "perf-test"
+path = "src/bin/perf-test.rs"
+required-features = ["perf-test"]
+
+[[bin]]
+name = "yaml-validate"
+path = "src/bin/yaml_validate.rs"
+
+[features]
+default = ["sqlite", "postgres", "local-executors", "remote-worker"]
+# Database backends
+postgres = ["czar-store/postgres"]
+sqlite = ["czar-store/sqlite"]
+d1 = ["czar-store/d1"]
+# Executors
+process = ["czar-executors/process"]
+cloudrun = ["czar-executors/cloudrun"]
+library = ["czar-executors/library"]
+wasm = ["czar-executors/wasm"]
+wasm-embedded = ["wasm", "czar-executors/wasm-embedded"]
+local-executors = ["process", "library", "wasm-embedded"]
+remote-worker = ["czar-executors/worker"]
+gcp = ["dep:czar-gcp"]
+perf-test = ["dep:sqlx", "dep:sysinfo"]
+
+[dependencies]
+# Core orchestration
+czar-core = { workspace = true, features = ["sqlx"] }
+czar-gcp = { workspace = true, optional = true }
+czar-store = { workspace = true }
+czar-executors = { workspace = true }
+czar-web = { workspace = true }
+
+# CLI & async
+clap = { workspace = true, features = ["env"] }
+tokio = { workspace = true, features = ["full"] }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+axum = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+reqwest = { workspace = true }
+
+# Other
+chrono = { workspace = true }
+uuid = { workspace = true }
+sysinfo = { workspace = true, optional = true }
+sha2 = { workspace = true }
+hex = { workspace = true }
+
+# For perf-test binary
+sqlx = { workspace = true, optional = true, features = ["runtime-tokio", "postgres", "uuid", "chrono", "json"] }
+
+[dev-dependencies]
+czar-store = { workspace = true, features = ["sqlite"] }
+indexmap = { workspace = true }
+axum = { workspace = true }
+tempfile = "3.24.0"
+
+[lints]
+workspace = true

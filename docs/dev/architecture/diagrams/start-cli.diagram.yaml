@@ -1,0 +1,19 @@
+type: sequence
+title: Starting a Run from the CLI
+participants:
+  - { id: user, is: User }
+  - { id: cli, is: CLI }
+  - { id: store, is: Store }
+steps:
+  - { from: user, to: cli, label: "czar trigger daily_etl, or czar run start daily_etl --input k=v" }
+  - { from: cli, to: store, label: "apply the migrations it doesn't have yet" }
+  - alt:
+      - when: no --flow and no selectors
+        steps:
+          - { from: cli, to: store, label: "insert Run: pending, the current Snapshot, inputs" }
+      - when: "--flow or selectors (czar trigger daily_etl --flow nightly +load)"
+        steps:
+          - { from: cli, to: store, label: "read the current Snapshot's YAML and the Workflow tasks" }
+          - { from: cli, to: cli, label: "resolve the flow, expand the selectors" }
+          - { from: cli, to: store, label: create or reuse a flow Snapshot }
+          - { from: cli, to: store, label: "insert Run: pending, flow Snapshot, selection, inputs" }

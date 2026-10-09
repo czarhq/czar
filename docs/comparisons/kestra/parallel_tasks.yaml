@@ -1,0 +1,46 @@
+id: parallel_tasks
+namespace: comparison
+
+tasks:
+  - id: fetch_all
+    type: io.kestra.plugin.core.flow.Parallel
+    tasks:
+      - id: fetch_users
+        type: io.kestra.plugin.scripts.python.Commands
+        taskRunner:
+          type: io.kestra.plugin.scripts.runner.docker.Docker
+        containerImage: python:3.11-slim
+        namespaceFiles:
+          enabled: true
+        commands:
+          - python scripts/parallel_tasks.py fetch_users
+
+      - id: fetch_orders
+        type: io.kestra.plugin.scripts.python.Commands
+        taskRunner:
+          type: io.kestra.plugin.scripts.runner.docker.Docker
+        containerImage: python:3.11-slim
+        namespaceFiles:
+          enabled: true
+        commands:
+          - python scripts/parallel_tasks.py fetch_orders
+
+      - id: fetch_products
+        type: io.kestra.plugin.scripts.python.Commands
+        taskRunner:
+          type: io.kestra.plugin.scripts.runner.docker.Docker
+        containerImage: python:3.11-slim
+        namespaceFiles:
+          enabled: true
+        commands:
+          - python scripts/parallel_tasks.py fetch_products
+
+  - id: combine_data
+    type: io.kestra.plugin.scripts.python.Commands
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+    containerImage: python:3.11-slim
+    namespaceFiles:
+      enabled: true
+    commands:
+      - python scripts/parallel_tasks.py combine_data

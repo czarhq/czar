@@ -1,0 +1,8 @@
+tasks:
+  heavy_task:
+    executor: python
+    file: tasks/heavy.py
+    timeout: 3600
+    resources:
+      cpu: 4      # cores or millicores
+      memory: 8Gi # or Mi, Gi

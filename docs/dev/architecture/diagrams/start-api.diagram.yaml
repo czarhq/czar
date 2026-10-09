@@ -1,0 +1,15 @@
+type: sequence
+title: Starting a Run through the API
+participants:
+  - { id: user, is: User }
+  - { id: ui, is: UI }
+  - { id: api, is: API }
+  - { id: store, is: Store }
+steps:
+  - { from: user, to: ui, label: "Start, with an optional flow and task selection" }
+  - { from: ui, to: api, label: "POST /api/runs {workflow, flow, selection}" }
+  - { from: api, to: store, label: "read the Workflow, its Snapshot's YAML, the Workflow tasks" }
+  - { from: api, to: api, label: "resolve the flow (strict validation) and the selection" }
+  - { from: api, to: store, label: create or reuse a flow Snapshot }
+  - { from: api, to: store, label: "insert Run: pending, flow Snapshot, selection" }
+  - { from: api, to: ui, label: run_id, kind: return }

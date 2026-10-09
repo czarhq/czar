@@ -1,0 +1,14 @@
+default:
+    @just --list
+
+# Start kedro-viz (visualization only, cannot trigger runs)
+server:
+    uv run kedro viz run
+
+# Run a specific pipeline
+run pipeline:
+    uv run kedro run --pipeline {{pipeline}}
+
+# Run all pipelines (default)
+run-all:
+    uv run kedro run

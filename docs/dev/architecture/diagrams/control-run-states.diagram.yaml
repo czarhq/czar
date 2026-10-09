@@ -1,0 +1,21 @@
+title: What pause, resume, cancel and retry do to a Run
+direction: RIGHT
+nodes:
+  - { id: failed, shape: state, label: failed, tone: bad }
+  - { id: pending, shape: state, label: pending }
+  - { id: running, shape: state, label: running }
+  - { id: paused, shape: state, label: paused }
+  - { id: cancelled, shape: state, label: cancelled, tone: quiet }
+  - { id: success, shape: state, label: success, tone: good }
+  - { id: success_note, shape: note, label: "pause and resume\nanswer\u00a0409,\u00a0cancel\nchanges nothing" }
+edges:
+  - { from: failed, to: pending, label: czar run retry }
+  - { from: pending, to: paused, label: pause }
+  - { from: running, to: paused, label: pause }
+  - { from: paused, to: running, label: "resume, the Run has Tasks" }
+  - { from: paused, to: pending, label: "resume, no Tasks yet" }
+  - { from: pending, to: cancelled, label: cancel }
+  - { from: running, to: cancelled, label: cancel }
+  - { from: paused, to: cancelled, label: cancel }
+  - { from: cancelled, to: pending, label: czar run retry }
+  - { from: success, to: success_note, style: dashed }

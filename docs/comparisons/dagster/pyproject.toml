@@ -1,0 +1,21 @@
+[project]
+name = "dagster-examples"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "dagster>=1.12.10",
+    "dagster-webserver>=1.12.10",
+]
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.408",
+    "ruff>=0.14.11",
+]
+
+[tool.dagster]
+module_name = "definitions"
+
+[tool.uv]
+exclude-newer = "7 days"

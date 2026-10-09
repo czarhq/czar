@@ -1,0 +1,11 @@
+generate:
+  kind: python
+  script: generate.py
+  refresh: true
+  args:
+    - --workflow-name
+    - wide_graph
+    - --layers
+    - 10
+    - --nodes-per-layer
+    - 100

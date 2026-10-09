@@ -1,0 +1,21 @@
+title: czar on one machine
+direction: DOWN
+nodes:
+  - { id: machine, label: Your machine, icon: "lucide:laptop", kind: boundary }
+  - { id: browser, in: machine, label: Web UI, detail: in your browser, icon: "lucide:app-window" }
+  - { id: tui, in: machine, label: czar-tui, detail: terminal UI, icon: "lucide:terminal" }
+  - { id: cli, in: machine, label: czar CLI, detail: "trigger, status, logs", icon: "lucide:square-terminal" }
+  - { id: serve, in: machine, label: czar serve, detail: one process, icon: "lucide:crown", kind: process }
+  - { id: api, in: serve, label: API and web UI, detail: "127.0.0.1:4000", icon: "lucide:globe" }
+  - { id: sched, in: serve, label: Scheduler, detail: starts ready tasks, icon: "lucide:workflow" }
+  - { id: exec, in: serve, label: Executors, detail: "process, python, container, library, wasm", icon: "lucide:cog" }
+  - { id: db, in: machine, label: SQLite, detail: "~/.czar/czar.db, or Postgres", icon: "devicon:sqlite" }
+  - { id: procs, in: machine, label: Task processes, detail: "sh, uv run python, docker", icon: "lucide:cpu" }
+edges:
+  - { from: browser, to: api, label: HTTP }
+  - { from: tui, to: api, label: HTTP }
+  - { from: api, to: db, label: "reads, writes" }
+  - { from: cli, to: db, label: "reads, writes" }
+  - { from: sched, to: db, label: runs and tasks }
+  - { from: sched, to: exec, label: run a task }
+  - { from: exec, to: procs, label: start }

@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: orchestrator
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+
+  orchestrator:
+    build:
+      context: ../..
+      dockerfile: crates/czar-cli/Dockerfile
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/orchestrator
+      CZAR_WORKFLOW_DEFINITIONS_DIR: /app/examples/workflows
+      PYTHONPATH: /app/python-sdk
+      RUST_LOG: info
+      # The API listens beyond localhost here, so it needs a token.
+      CZAR_AUTH_TOKEN: ${CZAR_AUTH_TOKEN:?set CZAR_AUTH_TOKEN to the token that protects the API}
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: serve --addr 0.0.0.0:4000
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../czar-web-react
+    ports:
+      - "80:80"
+    depends_on:
+      - orchestrator
+
+volumes:
+  postgres_data:

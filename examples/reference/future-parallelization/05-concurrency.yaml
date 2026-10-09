@@ -1,0 +1,6 @@
+tasks:
+  process:
+    executor: python
+    file: tasks/process.py
+    parallel: 100
+    concurrency: 8  # at most 8 run simultaneously

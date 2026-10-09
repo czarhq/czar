@@ -1,0 +1,60 @@
+name: local_demo
+
+types:
+  GreetOutput:
+    message: str
+    timestamp: datetime_tz
+  ComplimentOutput:
+    line: str
+    adjective: str
+  ShellEchoOutput:
+    note: str
+    finished_at: datetime_tz
+
+tasks:
+  greet:
+    executor: python
+    file: demo.py
+    function: greet
+    input_type:
+      name: str
+      delay: float
+    output_type: types.GreetOutput
+    inputs:
+      name:
+        const: Czar dev
+      delay:
+        const: 5
+
+  compliment:
+    executor: python
+    file: demo.py
+    function: compliment
+    depends_on: [greet]
+    input_type:
+      adjective: str
+      greet: types.GreetOutput
+    output_type: types.ComplimentOutput
+    inputs:
+      adjective:
+        const: ridiculously fast
+      greet:
+        ref: tasks.greet.output
+
+  shell_echo:
+    executor: python
+    file: demo.py
+    function: shell_echo
+    depends_on: [compliment]
+    input_type:
+      delay: float
+      note: str
+      compliment: types.ComplimentOutput
+    output_type: types.ShellEchoOutput
+    inputs:
+      delay:
+        const: 5
+      note:
+        const: python fallback for shell commands
+      compliment:
+        ref: tasks.compliment.output

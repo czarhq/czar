@@ -1,0 +1,124 @@
+{
+  "name": "Tier3ConditionalsLoops",
+  "properties": {
+    "activities": [
+      {
+        "name": "check_data_quality",
+        "type": "WebActivity",
+        "typeProperties": {
+          "url": "https://api.example.com/quality-check",
+          "method": "GET"
+        }
+      },
+      {
+        "name": "quality_branch",
+        "type": "IfCondition",
+        "dependsOn": [
+          {
+            "activity": "check_data_quality",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "typeProperties": {
+          "expression": {
+            "value": "@greater(activity('check_data_quality').output.score, 0.8)",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [
+            {
+              "name": "process_high_quality",
+              "type": "DatabricksNotebook",
+              "typeProperties": {
+                "notebookPath": "/process_high_quality"
+              },
+              "linkedServiceName": {
+                "referenceName": "DatabricksLinkedService",
+                "type": "LinkedServiceReference"
+              }
+            }
+          ],
+          "ifFalseActivities": [
+            {
+              "name": "clean_data",
+              "type": "DatabricksNotebook",
+              "typeProperties": {
+                "notebookPath": "/clean_data"
+              },
+              "linkedServiceName": {
+                "referenceName": "DatabricksLinkedService",
+                "type": "LinkedServiceReference"
+              }
+            },
+            {
+              "name": "process_low_quality",
+              "type": "DatabricksNotebook",
+              "dependsOn": [
+                {
+                  "activity": "clean_data",
+                  "dependencyConditions": ["Succeeded"]
+                }
+              ],
+              "typeProperties": {
+                "notebookPath": "/process_low_quality"
+              },
+              "linkedServiceName": {
+                "referenceName": "DatabricksLinkedService",
+                "type": "LinkedServiceReference"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "process_partitions",
+        "type": "ForEach",
+        "dependsOn": [
+          {
+            "activity": "quality_branch",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "typeProperties": {
+          "items": {
+            "value": "@createArray('partition_1', 'partition_2', 'partition_3')",
+            "type": "Expression"
+          },
+          "isSequential": false,
+          "activities": [
+            {
+              "name": "process_partition",
+              "type": "DatabricksNotebook",
+              "typeProperties": {
+                "notebookPath": "/process_partition",
+                "baseParameters": {
+                  "partition": "@item()"
+                }
+              },
+              "linkedServiceName": {
+                "referenceName": "DatabricksLinkedService",
+                "type": "LinkedServiceReference"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "combine_results",
+        "type": "DatabricksNotebook",
+        "dependsOn": [
+          {
+            "activity": "process_partitions",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "typeProperties": {
+          "notebookPath": "/combine_results"
+        },
+        "linkedServiceName": {
+          "referenceName": "DatabricksLinkedService",
+          "type": "LinkedServiceReference"
+        }
+      }
+    ]
+  }
+}

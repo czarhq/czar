@@ -1,0 +1,21 @@
+title: The orchestrator calls czar-worker
+direction: DOWN
+nodes:
+  - { id: orch, label: Orchestrator, detail: crates/czar-core, icon: "lucide:crown", kind: process }
+  - { id: sched, in: orch, is: Scheduler }
+  - { id: wexec, in: orch, label: WorkerExecutor, detail: "the Executor for a Worker", icon: "lucide:cog" }
+  - { id: client, in: orch, label: WorkerClient, detail: reqwest, icon: "lucide:send" }
+  - { id: worker, label: czar-worker, detail: crates/czar-worker, icon: "lucide:container", kind: process }
+  - { id: routes, in: worker, label: Router, detail: "routes.rs, bearer token check", icon: "lucide:route" }
+  - { id: compile, in: worker, label: POST /compile, detail: "handlers/compile.rs", icon: "lucide:file-cog" }
+  - { id: execute, in: worker, label: POST /execute, detail: "handlers/execute.rs", icon: "lucide:play" }
+  - { id: health, in: worker, label: GET /health, detail: "handlers/health.rs, always open", icon: "lucide:heart-pulse" }
+  - { id: execs, label: czar-executors, detail: "dispatch: process, python, wasm, library", icon: "lucide:cpu" }
+edges:
+  - { from: sched, to: wexec, label: execute a Task }
+  - { from: wexec, to: client }
+  - { from: client, to: routes, label: HTTP POST }
+  - { from: routes, to: compile }
+  - { from: routes, to: execute }
+  - { from: routes, to: health }
+  - { from: execute, to: execs, label: "dispatch(executor_type, …)" }

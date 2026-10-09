@@ -1,0 +1,11 @@
+types:
+  TransformInput:
+    extract: ExtractOutput
+    config:
+      normalize: bool
+      remove_duplicates: bool
+
+tasks:
+  transform:
+    file: tasks/transform.py
+    input: TransformInput

@@ -1,0 +1,5 @@
+rust_library_native:
+  executor: library
+  # Native library executor: host-specific shared library with direct in-process calls.
+  # Build these artifacts ahead of time with `just example-build polyglot`.
+  file: rust_tasks/target/${{ vars.BUILD_PROFILE }}/libpolyglot_rust_lib.${{ platform.lib_ext }}

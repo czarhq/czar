@@ -1,0 +1,31 @@
+type: sequence
+title: Running a Task as a Cloud Run job
+participants:
+  - { id: service, is: Service, label: Job service (Cloud Run), icon: "gcp:cloud-run" }
+  - { id: exec, is: Executor }
+  - { id: sched, is: Scheduler }
+steps:
+  - { from: sched, to: exec, label: "execute(Task id, job name, params)" }
+  - { from: exec, to: exec, label: "first Task for this project and region: create the client, start its 5 s poll loop" }
+  - { from: exec, to: exec, label: "access token (application default credentials)" }
+  - { from: exec, to: service, label: "POST jobs/{job}:run, env overrides, task_count" }
+  - alt:
+      - when: started
+        steps:
+          - { from: service, to: exec, label: execution name, kind: return }
+          - { from: exec, to: exec, label: "remember execution and Task, in memory" }
+          - { from: exec, to: sched, label: execution name, kind: return }
+      - when: error
+        steps:
+          - { from: exec, to: sched, label: error, kind: return }
+  - loop: every 5 s while executions are remembered
+    steps:
+      - { from: exec, to: service, label: GET the execution }
+      - alt:
+          - when: the status changed to success or failed
+            steps:
+              - { from: exec, to: sched, label: "success or failed, no output", kind: async }
+              - { from: exec, to: exec, label: forget the execution }
+          - when: "still running, or the request failed"
+            steps:
+              - { from: exec, to: exec, label: ask again next cycle }

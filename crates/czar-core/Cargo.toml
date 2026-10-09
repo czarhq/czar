@@ -1,0 +1,54 @@
+[package]
+name = "czar-core"
+version.workspace = true
+edition.workspace = true
+description = "Core domain models, traits, and scheduler runtime for Czar"
+readme = "README.md"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+keywords = ["workflow", "orchestration", "scheduler"]
+categories = ["development-tools"]
+
+[lib]
+name = "czar_core"
+
+[features]
+default = []
+sqlx = ["dep:sqlx"]
+
+[dependencies]
+indexmap = { workspace = true, features = ["serde"] }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+sha2 = { workspace = true }
+hex = { workspace = true }
+thiserror = { workspace = true }
+async-trait = { workspace = true }
+anyhow = { workspace = true }
+futures = { workspace = true }
+tracing = { workspace = true }
+chrono = { workspace = true, default-features = false, features = ["clock", "serde"] }
+uuid = { workspace = true, features = ["v4", "serde"] }
+tokio = { workspace = true, features = ["sync", "time", "macros"] }
+reqwest = { workspace = true }
+rustls = { workspace = true }
+croner = { workspace = true }
+url = { workspace = true }
+
+# SQL database support (for models_v2)
+sqlx = { workspace = true, optional = true, features = ["macros", "derive", "json"] }
+
+[dev-dependencies]
+tempfile = "3.24.0"
+sqlx = { workspace = true, features = ["runtime-tokio", "sqlite", "postgres", "uuid", "chrono", "json"] }
+axum = { workspace = true }
+tracing-subscriber = { workspace = true }
+url = { workspace = true }
+
+[lints]
+workspace = true

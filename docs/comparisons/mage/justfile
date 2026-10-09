@@ -1,0 +1,24 @@
+export DEFAULT_OWNER_EMAIL := "admin@admin.com"
+export DEFAULT_OWNER_PASSWORD := "admin"
+export DEFAULT_OWNER_USERNAME := "admin"
+
+default:
+    @just --list
+
+# Initialize Mage project (first time only)
+init:
+    uv run mage init demo_project
+
+# Start Mage server (UI at http://localhost:6789, login: admin@admin.com / admin)
+server:
+    uv run mage start demo_project
+
+# Run a pipeline via CLI
+run pipeline:
+    uv run mage run demo_project {{pipeline}}
+
+# Run all pipelines
+run-all:
+    uv run mage run demo_project parallel_tasks
+    uv run mage run demo_project data_pipeline
+    uv run mage run demo_project conditional_branching

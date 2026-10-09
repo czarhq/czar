@@ -1,0 +1,56 @@
+[package]
+name = "czar-web"
+version.workspace = true
+edition.workspace = true
+description = "Web UI and API server for Czar"
+readme = "README.md"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+keywords = ["workflow", "orchestration", "web"]
+categories = ["web-programming", "development-tools"]
+# ui/ holds the built web UI only when scripts/embed-ui.sh put it there for a
+# release; build.rs embeds it.
+include = ["src/**", "tests/**", "build.rs", "ui/**", "README.md", "Cargo.toml"]
+
+[lib]
+name = "czar_web"
+
+[features]
+default = ["postgres"]
+postgres = ["czar-store/postgres", "czar-core/sqlx"]
+sqlite = ["czar-store/sqlite", "czar-core/sqlx"]
+d1 = ["czar-store/d1"]
+
+[dependencies]
+axum = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "net"] }
+tower-http = { workspace = true, features = ["fs"] }
+tracing-subscriber = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+clap = { workspace = true, features = ["env"] }
+chrono = { workspace = true }
+futures = { workspace = true }
+anyhow = { workspace = true }
+uuid = { workspace = true }
+sha2 = { workspace = true }
+subtle = { workspace = true }
+hex = { workspace = true }
+url = { workspace = true }
+czar-core = { workspace = true, features = ["sqlx"] }
+czar-store = { workspace = true }
+
+[dev-dependencies]
+czar-store = { workspace = true, features = ["sqlite"] }
+tower = { workspace = true }
+tokio-tungstenite = "0.30"
+reqwest = { workspace = true }
+sqlx = { workspace = true, features = ["runtime-tokio", "sqlite", "uuid"] }
+
+[lints]
+workspace = true

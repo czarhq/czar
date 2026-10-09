@@ -1,0 +1,6 @@
+pending ──→ dispatched ──→ running ──→ success
+                │              │
+                │              ├──→ failed ──→ pending (retry)
+                │              │         └──→ [final]
+                │              │
+                └──────────────┴──→ skipped (upstream failed)

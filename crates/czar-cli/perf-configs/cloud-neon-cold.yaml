@@ -1,0 +1,16 @@
+# Neon serverless Postgres after a cold start (scale-to-zero).
+# Neon suspends compute after inactivity; first query after wake takes 100-500ms.
+# This simulates sustained high-latency to understand scheduler behavior under
+# severely degraded DB responsiveness.
+# Time-bounded: measures tasks/sec over a 10s window
+workflows: 3000
+tasks_per_workflow: 1
+duration: 0.05
+benchmark_duration_secs: 60
+db_extra_latency_ms: 100
+
+scheduler:
+  poll_interval_secs: 2
+  max_tasks_per_batch: 200
+  max_concurrent_dispatches: 50
+  max_concurrent_status_checks: 50

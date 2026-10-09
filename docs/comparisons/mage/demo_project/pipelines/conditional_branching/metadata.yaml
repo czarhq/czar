@@ -1,0 +1,108 @@
+blocks:
+- all_upstream_blocks_executed: true
+  color: null
+  configuration: {}
+  downstream_blocks:
+  - process_by_quality
+  executor_config: null
+  executor_type: local_python
+  has_callback: null
+  language: python
+  name: check_data_quality
+  retry_config: null
+  status: executed
+  timeout: null
+  type: data_loader
+  upstream_blocks: []
+  uuid: check_data_quality
+- all_upstream_blocks_executed: true
+  color: null
+  configuration: {}
+  downstream_blocks:
+  - process_partitions
+  executor_config: null
+  executor_type: local_python
+  has_callback: null
+  language: python
+  name: process_by_quality
+  retry_config: null
+  status: executed
+  timeout: null
+  type: custom
+  upstream_blocks:
+  - check_data_quality
+  uuid: process_by_quality
+- all_upstream_blocks_executed: true
+  color: null
+  configuration: {}
+  downstream_blocks:
+  - process_partitions
+  executor_config: null
+  executor_type: local_python
+  has_callback: null
+  language: python
+  name: get_partitions
+  retry_config: null
+  status: executed
+  timeout: null
+  type: data_loader
+  upstream_blocks: []
+  uuid: get_partitions
+- all_upstream_blocks_executed: true
+  color: null
+  configuration: {}
+  downstream_blocks:
+  - combine_results
+  executor_config: null
+  executor_type: local_python
+  has_callback: null
+  language: python
+  name: process_partitions
+  retry_config: null
+  status: executed
+  timeout: null
+  type: custom
+  upstream_blocks:
+  - process_by_quality
+  - get_partitions
+  uuid: process_partitions
+- all_upstream_blocks_executed: false
+  color: null
+  configuration: {}
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: null
+  language: python
+  name: combine_results
+  retry_config: null
+  status: updated
+  timeout: null
+  type: data_exporter
+  upstream_blocks:
+  - process_partitions
+  uuid: combine_results
+cache_block_output_in_memory: false
+callbacks: []
+concurrency_config: {}
+conditionals: []
+created_at: null
+data_integration: null
+description: null
+executor_config: {}
+executor_count: 1
+executor_type: null
+extensions: {}
+name: conditional_branching
+notification_config: {}
+remote_variables_dir: null
+retry_config: {}
+run_pipeline_in_one_process: false
+settings:
+  triggers: null
+spark_config: {}
+tags: []
+type: python
+uuid: conditional_branching
+variables_dir: ~/.mage_data/demo_project
+widgets: []

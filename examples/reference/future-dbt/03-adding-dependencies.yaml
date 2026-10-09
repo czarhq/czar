@@ -1,0 +1,21 @@
+tasks:
+  # Custom Python task
+  extract_data:
+    executor: python
+    file: tasks/extract.py
+
+  # dbt staging models depend on extraction
+  dbt.staging.stg_users:
+    depends_on: [extract_data]
+
+  dbt.staging.stg_orders:
+    depends_on: [extract_data]
+
+  # dbt mart models run after staging (internal dbt deps preserved)
+  dbt.marts.order_facts: {}
+
+  # Custom task depends on dbt output
+  send_report:
+    executor: python
+    file: tasks/report.py
+    depends_on: [dbt.marts.order_facts]

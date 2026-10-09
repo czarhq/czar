@@ -1,0 +1,7 @@
+executors:
+  dbt:
+    type: dbt
+    config:
+      profiles_dir: ~/.dbt
+      target: prod
+      threads: 4

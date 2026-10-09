@@ -1,0 +1,4 @@
+tasks:
+  build:
+    executor: process
+    command: target/${{ vars.BUILD_PROFILE }}/my-job

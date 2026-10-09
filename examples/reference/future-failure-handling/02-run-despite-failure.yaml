@@ -1,0 +1,28 @@
+tasks:
+  extract:
+    executor: python
+    file: tasks/extract.py
+
+  transform:
+    executor: python
+    file: tasks/transform.py
+    depends_on: [extract]
+
+  load:
+    executor: python
+    file: tasks/load.py
+    depends_on: [transform]
+
+  # Notification runs regardless of success/failure
+  notify:
+    executor: python
+    file: tasks/notify.py
+    depends_on: [load]
+    on_failure: run  # Run even if load fails
+
+  # Cleanup always runs
+  cleanup:
+    executor: python
+    file: tasks/cleanup.py
+    depends_on: [extract, transform, load]
+    on_failure: run

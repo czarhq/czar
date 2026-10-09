@@ -1,0 +1,5 @@
+tasks:
+  slow_task:
+    executor: process
+    command: ./slow-job
+    timeout: 1800

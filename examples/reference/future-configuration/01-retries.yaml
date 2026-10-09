@@ -1,0 +1,6 @@
+tasks:
+  flaky_task:
+    executor: python
+    file: tasks/flaky.py
+    retries: 3
+    retry_delay: 60  # seconds

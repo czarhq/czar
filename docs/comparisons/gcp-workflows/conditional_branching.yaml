@@ -1,0 +1,65 @@
+# GCP Workflows - Conditional Branching Example
+# Demonstrates conditionals, branching, and loops
+# Note: Requires Cloud Run service (see service/ directory)
+
+main:
+  params: [args]
+  steps:
+    - init:
+        assign:
+          - service_url: https://workflow-service-PROJECT_ID.run.app
+    - check_data_quality:
+        call: http.post
+        args:
+          url: ${service_url + "/check_data_quality"}
+          auth:
+            type: OIDC
+        result: quality_result
+    - decide_processing_path:
+        switch:
+          - condition: ${quality_result.body.score > 0.8}
+            next: process_high_quality
+          - condition: true
+            next: clean_data
+    - process_high_quality:
+        call: http.post
+        args:
+          url: ${service_url + "/process_high_quality"}
+          auth:
+            type: OIDC
+        next: process_partitions
+    - clean_data:
+        call: http.post
+        args:
+          url: ${service_url + "/clean_data"}
+          auth:
+            type: OIDC
+        next: process_low_quality
+    - process_low_quality:
+        call: http.post
+        args:
+          url: ${service_url + "/process_low_quality"}
+          auth:
+            type: OIDC
+        next: process_partitions
+    - process_partitions:
+        parallel:
+          shared: [service_url]
+          for:
+            value: partition
+            in: ["partition_1", "partition_2", "partition_3"]
+            steps:
+              - process_partition:
+                  call: http.post
+                  args:
+                    url: ${service_url + "/process_partition"}
+                    auth:
+                      type: OIDC
+                    body:
+                      partition: ${partition}
+    - combine_results:
+        call: http.post
+        args:
+          url: ${service_url + "/combine_results"}
+          auth:
+            type: OIDC

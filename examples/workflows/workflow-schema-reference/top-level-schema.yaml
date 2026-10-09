@@ -1,0 +1,58 @@
+name: <workflow_name>
+description: <optional string>
+schedule: <optional cron string>
+
+vars:                 # optional workflow variables
+  <NAME>: <string>
+
+types:                # optional type aliases
+  <TypeAlias>: <type_expr>
+
+task_groups:          # optional named task groups
+  <group_name>: [<task_name>, ...]
+
+tasks:
+  <task_name>:
+    executor: container|python|process|cloudrun|library|wasm|<project_executor_alias>
+    image: <container_image>  # required for container
+    file: <path>         # executor-dependent
+    module: <module>     # executor-dependent
+    function: <name>     # optional for python
+    command: <cmd>       # executor-dependent
+    args: [<arg>, ...]   # optional for process/container/wasm
+    job: <job_name>      # executor-dependent
+    config_file: <path>  # required for custom project executors
+    env: { <NAME>: <scalar>, ... }  # optional env vars
+    secrets: [{ name: <id>, secret: <ref>, path: <path> }, ...]  # process/python/container only
+    depends_on: [<task_name>, ...]
+    timeout: <seconds>
+    retries: <count>
+    retry_delay: <seconds>          # optional fixed retry delay
+    on_failure: skip|run            # optional; default skip
+    input_type: <object_type_expr>   # optional
+    output_type: <type_expr>         # optional
+    validate_output: true|false      # optional; default true
+    inputs:                          # optional; omit when empty
+      <arg_name>: <binding>
+    when: <condition string>         # optional
+    parallel: <count>                # optional static fan-out only
+    concurrency: <count>             # optional with parallel
+    parallel_mode: czar|cloud_run_tasks
+    wasm_mode: embedded|cli          # wasm only
+
+flows:               # optional curated task subsets
+  <flow_name>:
+    description: <optional string>
+    tasks: [<task_name>, ...] | "*" | {<task_name>: {}}
+
+hooks:               # optional task/run lifecycle hooks
+  <hook_name>:
+    on: task.start|task.success|task.failed|task.skipped|run.start|run.success|run.failed
+    tasks: "*" | [<task_name>, ...]  # task events only
+    executor: python|process|cloudrun|library|wasm
+    file: <path>
+    command: <cmd>
+    job: <job_name>
+    module: <module>
+    function: <name>
+    timeout: <seconds>

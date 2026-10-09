@@ -1,0 +1,22 @@
+type: sequence
+title: Hand off a job
+participants:
+  - { id: proc, is: Proc }
+  - { id: service, is: Service }
+  - { id: exec, is: Executor }
+  - { id: sched, is: Scheduler }
+  - { id: store, is: Store }
+steps:
+  - { from: proc, to: service, label: start the job }
+  - { from: proc, to: exec, label: "CZAR_OUTPUT:{\"deferred\": [{service_type, job_id, ...}]}, exit 0", kind: return }
+  - { from: exec, to: sched, label: "success, with that output", kind: async }
+  - loop: each entry in the deferred list
+    steps:
+      - alt:
+          - when: it has service_type and job_id
+            steps:
+              - { from: sched, to: store, label: "create a Deferred job, pending" }
+          - when: otherwise
+            steps:
+              - { from: sched, to: sched, label: "log \"Invalid deferrable data\"" }
+  - { note: "the Task keeps its status, the output is not stored", over: [sched, store] }

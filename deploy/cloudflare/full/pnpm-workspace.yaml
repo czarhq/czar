@@ -1,0 +1,12 @@
+packages:
+  - .
+
+minimumReleaseAge: 10080
+ignoredOptionalDependencies:
+  - "@img/sharp-*"
+  - "@img/sharp-libvips-*"
+overrides:
+  # miniflare pins an undici with known advisories (GHSA-8436-99hf-9mmv and others).
+  undici: ^7.29.1
+  # and a sharp whose libvips build has an old librsvg (GHSA in sharp < 0.35.5; its native packages are not installed anyway).
+  sharp: ^0.35.5

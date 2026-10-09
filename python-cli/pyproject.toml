@@ -1,0 +1,37 @@
+[build-system]
+# maturin builds the `czar` binary from crates/czar-cli and wraps it in a
+# platform wheel (manylinux, macOS, Windows), like ruff and uv do.
+requires = ["maturin>=1.9,<2"]
+build-backend = "maturin"
+
+[project]
+name = "czar-cli"
+version = "0.1.0"
+description = "Bundled Czar CLI binary for Python projects"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0 OR MIT"
+license-files = ["LICENSE-APACHE", "LICENSE-MIT"]
+keywords = ["workflow", "orchestration", "czar", "cli"]
+authors = [
+    {name = "Czar contributors"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.urls]
+Homepage = "https://github.com/czarhq/czar"
+Repository = "https://github.com/czarhq/czar"
+Documentation = "https://github.com/czarhq/czar/tree/main/docs"
+
+[tool.uv]
+exclude-newer = "7 days"
+
+[tool.maturin]
+bindings = "bin"
+manifest-path = "../crates/czar-cli/Cargo.toml"
+strip = true

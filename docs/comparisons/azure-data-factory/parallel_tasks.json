@@ -1,0 +1,55 @@
+{
+  "name": "Tier1Dependencies",
+  "properties": {
+    "activities": [
+      {
+        "name": "fetch_users",
+        "type": "WebActivity",
+        "typeProperties": {
+          "url": "https://api.example.com/users",
+          "method": "GET"
+        }
+      },
+      {
+        "name": "fetch_orders",
+        "type": "WebActivity",
+        "typeProperties": {
+          "url": "https://api.example.com/orders",
+          "method": "GET"
+        }
+      },
+      {
+        "name": "fetch_products",
+        "type": "WebActivity",
+        "typeProperties": {
+          "url": "https://api.example.com/products",
+          "method": "GET"
+        }
+      },
+      {
+        "name": "combine_data",
+        "type": "ExecutePipeline",
+        "dependsOn": [
+          {
+            "activity": "fetch_users",
+            "dependencyConditions": ["Succeeded"]
+          },
+          {
+            "activity": "fetch_orders",
+            "dependencyConditions": ["Succeeded"]
+          },
+          {
+            "activity": "fetch_products",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "typeProperties": {
+          "pipeline": {
+            "referenceName": "CombineDataPipeline",
+            "type": "PipelineReference"
+          }
+        }
+      }
+    ]
+  }
+}

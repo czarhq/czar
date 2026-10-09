@@ -1,0 +1,70 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Package managers
+uv.lock
+
+# Linting/formatting caches
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# pyenv
+.python-version
+
+# Airflow
+airflow.db
+airflow-webserver.pid
+logs/
+airflow_logs/
+
+# Dagster
+.dagster_home/
+.tmp_dagster_home_*/
+storage/
+
+# Luigi
+*.done
+luigi_history.db
+extracted.json
+transformed.json
+quality_score.json
+
+# Mage
+~
+.ssh_tunnel/
+.file_versions/
+titanic_clean.csv
+mage_data/
+
+# Metaflow
+.metaflow/
+
+# Kedro
+.viz/
+
+# Prefect
+.prefect/
+
+# Kestra
+.kestra-data/
+
+# OS
+.DS_Store
+Thumbs.db

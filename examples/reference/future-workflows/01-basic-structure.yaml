@@ -1,0 +1,17 @@
+name: my_etl
+
+tasks:
+  extract:
+    executor: python
+    file: tasks/extract.py
+    timeout: 600
+
+  transform:
+    executor: python
+    file: tasks/transform.py
+    depends_on: [extract]
+
+  load:
+    executor: python
+    file: tasks/load.py
+    depends_on: [transform]

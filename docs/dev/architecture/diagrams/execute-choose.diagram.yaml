@@ -1,0 +1,27 @@
+title: Choosing an Executor
+direction: DOWN
+nodes:
+  - { id: task, label: A Task to dispatch, icon: "lucide:list-todo" }
+  - { id: stamped, shape: decision, label: "Its Workflow carries\na Worker URL?" }
+  - { id: worker, is: Executor, label: Worker executor, detail: POST /execute to that URL, icon: "lucide:container" }
+  - { id: custom, shape: decision, label: "executor starts\nwith custom:?" }
+  - { id: process, is: Executor, label: Process executor, detail: (runs the Python class) }
+  - { id: kind, shape: decision, label: executor value }
+  - { id: proc2, is: Executor, label: Process executor }
+  - { id: python, is: Executor, label: Python executor, icon: "devicon:python" }
+  - { id: library, is: Executor, label: Library executor, icon: "lucide:library" }
+  - { id: wasm, is: Executor, label: Wasm executor, icon: "devicon:wasm" }
+  - { id: cloudrun, is: Executor, label: Cloud Run executor, detail: one per project and region, icon: "gcp:cloud-run" }
+  - { id: err, label: "Error: Task fails", detail: "(unknown kind, or not in this build)", icon: "lucide:circle-x", tone: bad }
+edges:
+  - { from: task, to: stamped, main: true }
+  - { from: stamped, to: worker, label: "yes" }
+  - { from: stamped, to: custom, label: "no", main: true }
+  - { from: custom, to: process, label: "yes" }
+  - { from: custom, to: kind, label: "no", main: true }
+  - { from: kind, to: proc2, label: "process, container" }
+  - { from: kind, to: python, label: python }
+  - { from: kind, to: library, label: library }
+  - { from: kind, to: wasm, label: wasm }
+  - { from: kind, to: cloudrun, label: cloudrun }
+  - { from: kind, to: err, label: anything else }

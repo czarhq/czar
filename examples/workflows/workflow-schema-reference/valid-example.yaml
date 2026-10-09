@@ -1,0 +1,31 @@
+name: fast_demo
+vars:
+  PROFILE: debug
+
+types:
+  TaskResult:
+    task: str
+    status: str
+    timestamp: datetime_utc
+
+tasks:
+  task_a:
+    executor: python
+    module: fast
+    function: task_a
+    output_type: types.TaskResult
+
+  task_b:
+    executor: python
+    module: fast
+    function: task_b
+    depends_on: [task_a]
+    input_type:
+      a: types.TaskResult
+      profile: str
+    output_type: types.TaskResult
+    inputs:
+      a:
+        ref: tasks.task_a.output
+      profile:
+        const: "${{ vars.PROFILE }}"

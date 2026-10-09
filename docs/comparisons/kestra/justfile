@@ -1,0 +1,62 @@
+KESTRA_AUTH := "admin@admin.com:Admin123"
+
+default:
+    @just --list
+
+# Start Kestra server (UI at http://localhost:8080, login: admin@admin.com / Admin123)
+server:
+    mkdir -p .kestra-data
+    docker run --pull=always --rm --name kestra -p 8080:8080 --user=root \
+      -v "/var/run/docker.sock:/var/run/docker.sock" \
+      -v "/tmp:/tmp" \
+      -v "$(pwd)/.kestra-data:/app/storage" \
+      kestra/kestra:latest server local
+
+# Stop Kestra server
+stop:
+    docker stop kestra
+
+# Upload a flow to Kestra (creates or updates)
+upload flow:
+    curl -s -u "{{KESTRA_AUTH}}" -X POST "http://localhost:8080/api/v1/main/flows" \
+      -H "Content-Type: application/x-yaml" \
+      --data-binary @{{flow}}.yaml
+
+# Delete tutorial flows that come with Kestra by default
+clean-tutorials:
+    -curl -s -u "{{KESTRA_AUTH}}" -X DELETE "http://localhost:8080/api/v1/main/flows/tutorial/business-automation"
+    -curl -s -u "{{KESTRA_AUTH}}" -X DELETE "http://localhost:8080/api/v1/main/flows/tutorial/business-processes"
+    -curl -s -u "{{KESTRA_AUTH}}" -X DELETE "http://localhost:8080/api/v1/main/flows/tutorial/data-engineering-pipeline"
+    -curl -s -u "{{KESTRA_AUTH}}" -X DELETE "http://localhost:8080/api/v1/main/flows/tutorial/hello-world"
+    -curl -s -u "{{KESTRA_AUTH}}" -X DELETE "http://localhost:8080/api/v1/main/flows/tutorial/infrastructure-automation"
+    -curl -s -u "{{KESTRA_AUTH}}" -X DELETE "http://localhost:8080/api/v1/main/flows/tutorial/microservices-and-apis"
+
+# Upload a script to namespace files
+upload-script script:
+    curl -s -u "{{KESTRA_AUTH}}" -X POST "http://localhost:8080/api/v1/main/namespaces/comparison/files?path=scripts/{{script}}.py" \
+      -H "Content-Type: multipart/form-data" \
+      -F "fileContent=@scripts/{{script}}.py"
+
+# Upload all scripts to namespace files
+upload-scripts:
+    just upload-script parallel_tasks
+    just upload-script data_pipeline
+    just upload-script conditional_branching
+
+# Upload all flows
+upload-all:
+    just clean-tutorials
+    just upload-scripts
+    just upload parallel_tasks
+    just upload data_pipeline
+    just upload conditional_branching
+
+# Run a flow
+run namespace flow:
+    curl -s -u "{{KESTRA_AUTH}}" -X POST "http://localhost:8080/api/v1/main/executions/{{namespace}}/{{flow}}"
+
+# Run all flows
+run-all:
+    just run comparison parallel_tasks
+    just run comparison data_pipeline
+    just run comparison conditional_branching

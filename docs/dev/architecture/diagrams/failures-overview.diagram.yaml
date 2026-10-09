@@ -1,0 +1,21 @@
+title: Where failures come from, and what follows
+direction: DOWN
+nodes:
+  - { id: report, label: The Executor reports failed, icon: "lucide:cog" }
+  - { id: dispatch, label: Dispatch fails, detail: "no Executor, an input does not\nresolve, a dependency failed", icon: "lucide:send" }
+  - { id: contract, label: "success, but the output\nbreaks output_type", icon: "lucide:file-x" }
+  - { id: timeout, label: The timeout check, detail: older than timeout_seconds, icon: "lucide:timer-off" }
+  - { id: retries, shape: decision, label: attempts < max_retries? }
+  - { id: retry, label: "Task pending, attempts + 1,\nretry_at set", icon: "lucide:rotate-ccw", tone: accent, link: "../flows/failures.md#retries" }
+  - { id: final, label: Task failed for good, icon: "lucide:circle-x", tone: bad, link: "../flows/failures.md#a-final-failure" }
+  - { id: deps, label: "Its waiting dependents failed,\ndown the graph", icon: "lucide:git-fork", link: "../flows/failures.md#upstream-failure" }
+  - { id: run, label: The Run may end failed, icon: "lucide:flag", link: "../flows/schedule.md#runs-complete" }
+edges:
+  - { from: report, to: retries }
+  - { from: dispatch, to: retries }
+  - { from: contract, to: retries }
+  - { from: timeout, to: retries }
+  - { from: retries, to: retry, label: "yes" }
+  - { from: retries, to: final, label: "no", main: true }
+  - { from: final, to: deps, main: true }
+  - { from: deps, to: run, main: true }

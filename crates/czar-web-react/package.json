@@ -1,0 +1,41 @@
+{
+  "name": "czar-web-react",
+  "version": "0.1.0",
+  "description": "React-based Web UI for Czar",
+  "type": "module",
+  "packageManager": "pnpm@10.18.0",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test --experimental-strip-types src/components/groupedGraphUtils.test.ts src/hooks/runStatus.test.ts",
+    "test:smoke": "playwright test",
+    "smoke:install": "playwright install chromium",
+    "typecheck": "tsc --noEmit",
+    "test:perf": "playwright test --config=playwright.perf.config.ts",
+    "perf:install": "playwright install chromium",
+    "test:graph-bench": "playwright test --config=playwright.graph-bench.config.ts"
+  },
+  "dependencies": {
+    "@dagrejs/dagre": "^2.0.4",
+    "@xyflow/react": "^12.11.6",
+    "highlight.js": "^11.12.0",
+    "html-to-image": "^1.11.13",
+    "lucide-react": "^0.577.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "lighthouse": "^13.5.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.6"
+  }
+}

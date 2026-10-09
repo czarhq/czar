@@ -1,0 +1,5 @@
+tasks:
+  extract:
+    executor: python
+    file: tasks/extract.py
+    output: ExtractOutput

@@ -1,0 +1,6 @@
+tasks:
+  publish:
+    executor: process
+    command: ./publish.sh
+    depends_on: [check]
+    when: tasks.check.output.ready == true

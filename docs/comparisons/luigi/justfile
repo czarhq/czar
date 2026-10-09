@@ -1,0 +1,27 @@
+export PYTHONPATH := justfile_directory()
+export LUIGI_CONFIG_PATH := justfile_directory() / "luigi.cfg"
+
+default:
+    @just --list
+
+# Start Luigi scheduler UI (http://localhost:8082)
+server:
+    uv run luigid
+
+# Run a task (requires server running)
+run example task:
+    uv run luigi --module tasks.{{example}} {{task}}
+
+# Run all examples (requires server running)
+run-all: clean
+    uv run luigi --module tasks.parallel_tasks CombineData
+    uv run luigi --module tasks.data_pipeline Load
+    uv run luigi --module tasks.conditional_branching CombineResults
+
+# Run with local scheduler (no server needed)
+run-local example task:
+    uv run luigi --module tasks.{{example}} {{task}} --local-scheduler
+
+# Clean output files
+clean:
+    rm -f *.done extracted.json transformed.json quality_score.json 2>/dev/null || true

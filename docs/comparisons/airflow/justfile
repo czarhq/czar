@@ -1,0 +1,19 @@
+export AIRFLOW__CORE__DAGS_FOLDER := justfile_directory() / "dags"
+export AIRFLOW__CORE__LOAD_EXAMPLES := "False"
+
+default:
+    @just --list
+
+# Start Airflow standalone server
+server:
+    uv run airflow standalone
+
+# Test a specific DAG
+test dag:
+    uv run airflow dags test {{dag}}
+
+# Run all example DAGs
+test-all:
+    uv run airflow dags test parallel_tasks_flow
+    uv run airflow dags test data_pipeline_flow
+    uv run airflow dags test conditional_branching_flow

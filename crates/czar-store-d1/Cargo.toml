@@ -1,0 +1,35 @@
+[package]
+name = "czar-store-d1"
+version.workspace = true
+edition.workspace = true
+description = "Cloudflare D1 database backend for Czar state storage"
+readme = "README.md"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+keywords = ["workflow", "orchestration", "database", "cloudflare", "d1"]
+categories = ["database", "development-tools"]
+
+[lib]
+name = "czar_store_d1"
+
+[dependencies]
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+chrono = { workspace = true }
+czar-core = { package = "czar-core", path = "../czar-core", version = "0.1.0", default-features = false }
+reqwest = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true, features = ["serde"] }
+
+[dev-dependencies]
+axum = { workspace = true }
+sqlx = { workspace = true, features = ["runtime-tokio", "tls-rustls", "sqlite", "uuid", "chrono", "json"] }
+tokio = { workspace = true, features = ["macros", "net", "process", "rt-multi-thread", "sync", "time"] }
+
+[lints]
+workspace = true

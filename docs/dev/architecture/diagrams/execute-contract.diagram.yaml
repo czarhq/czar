@@ -1,0 +1,23 @@
+type: sequence
+title: The Executor contract
+participants:
+  - { id: sched, is: Scheduler }
+  - { id: exec, is: Executor }
+  - { id: proc, is: Proc }
+  - { id: store, is: Store }
+steps:
+  - { from: sched, to: exec, label: "execute(Task id, job name, params with resolved inputs)" }
+  - { from: exec, to: proc, label: start the work }
+  - { from: exec, to: sched, label: "execution name, or an error", kind: return }
+  - alt:
+      - when: execution name
+        steps:
+          - { from: sched, to: store, label: Task dispatched }
+      - when: error
+        steps:
+          - { from: sched, to: store, label: "Task failed, or pending for a retry" }
+  - loop: while the work runs
+    steps:
+      - { from: exec, to: sched, label: "running, log, progress", kind: async }
+  - { from: exec, to: sched, label: "success with an output, or failed with an error", kind: async }
+  - { from: sched, to: store, label: record each report on its next tick }

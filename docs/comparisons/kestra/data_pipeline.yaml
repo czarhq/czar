@@ -1,0 +1,33 @@
+id: data_pipeline
+namespace: comparison
+
+tasks:
+  - id: extract
+    type: io.kestra.plugin.scripts.python.Commands
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+    containerImage: python:3.11-slim
+    namespaceFiles:
+      enabled: true
+    commands:
+      - python scripts/data_pipeline.py extract
+
+  - id: transform
+    type: io.kestra.plugin.scripts.python.Commands
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+    containerImage: python:3.11-slim
+    namespaceFiles:
+      enabled: true
+    commands:
+      - python scripts/data_pipeline.py transform
+
+  - id: load
+    type: io.kestra.plugin.scripts.python.Commands
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+    containerImage: python:3.11-slim
+    namespaceFiles:
+      enabled: true
+    commands:
+      - python scripts/data_pipeline.py load

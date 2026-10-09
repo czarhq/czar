@@ -1,0 +1,22 @@
+# Benchmarks
+
+## Status
+
+- Benchmark execution in this report: NOT RUN
+- Baseline summary check: {{ checks_by_key.benchmark_summary.display_status }} ([{{ checks_by_key.benchmark_summary.log_path }}]({{ checks_by_key.benchmark_summary.log_path }}))
+- Latest recorded benchmark table source: `{{ perf.source_path if perf.source_path else 'docs/reports/perf/results.md' }}`
+
+{% if perf.status == 'available' %}
+## Latest Recorded Baseline
+
+- Date: {{ perf.latest_date }}
+- Commit: `{{ perf.latest_commit }}`
+
+| Date | Commit | Config | Avg Latency | Throughput | RSS KB | CPU avg | CPU peak | Peak pending | Peak dispatched | Peak running | Status updates | Note |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+{% for row in perf.rows -%}
+| {{ row.date }} | `{{ row.commit }}` | `{{ row.config }}` | {{ row.avg_latency }} | {{ row.throughput }} | {{ row.rss_kb }} | {{ row.cpu_avg }} | {{ row.cpu_peak }} | {{ row.peak_pending }} | {{ row.peak_dispatched }} | {{ row.peak_running }} | {{ row.status_updates }} | {{ row.note }} |
+{% endfor %}
+{% else %}
+No recorded benchmark baseline was found.
+{% endif %}

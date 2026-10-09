@@ -1,0 +1,20 @@
+type: sequence
+title: Log in to the Web UI
+participants:
+  - { id: user, is: User }
+  - { id: ui, is: UI }
+  - { id: api, is: API }
+steps:
+  - { from: ui, to: api, label: "GET /api/auth/status, always open" }
+  - { from: api, to: ui, label: "{mode, authenticated}", kind: return }
+  - opt: token mode, not authenticated
+    steps:
+      - { from: user, to: ui, label: paste the API token }
+      - { from: ui, to: api, label: "POST /api/auth/login {token}" }
+      - alt:
+          - when: the token matches
+            steps:
+              - { from: api, to: ui, label: "204, Set-Cookie czar_session (HttpOnly, SameSite=Strict, 30 days)", kind: return }
+          - when: otherwise
+            steps:
+              - { from: api, to: ui, label: "401", kind: return }

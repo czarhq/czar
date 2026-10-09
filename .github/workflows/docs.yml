@@ -1,0 +1,20 @@
+# The docs site on GitHub Pages: docs/ and README.md, built by in-ctrl
+# (https://github.com/gajop/in-ctrl). It uses only GitHub's token; nothing is
+# deployed anywhere else. Pages must be set to deploy from GitHub Actions.
+name: Docs
+
+on:
+  push:
+    branches: [main]
+    paths: ["docs/**", "README.md", "in-ctrl.config.yaml", ".github/workflows/docs.yml"]
+  workflow_dispatch:
+
+jobs:
+  docs:
+    # Only the public repository publishes the site.
+    if: github.repository == 'czarhq/czar'
+    uses: gajop/in-ctrl/.github/workflows/pages.yml@v0.1.0
+    permissions:
+      contents: read
+      pages: write
+      id-token: write

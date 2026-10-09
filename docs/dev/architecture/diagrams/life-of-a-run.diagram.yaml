@@ -1,0 +1,14 @@
+title: The life of a run, in five phases
+direction: DOWN
+nodes:
+  - { id: define, label: 1. Define, detail: "Workflow, Workflow tasks,\nSnapshot", icon: "lucide:file-cog", link: ../flows/define.md }
+  - { id: start, label: 2. Start, detail: "a pending Run,\npinned to a Snapshot", icon: "lucide:play", link: ../flows/start.md }
+  - { id: schedule, label: 3. Schedule, detail: "the Run's Tasks,\ndispatched when ready", icon: "lucide:workflow", link: ../flows/schedule.md }
+  - { id: execute, label: 4. Execute, detail: "reports: running,\nsuccess or failed", icon: "lucide:cog", link: ../flows/execute.md }
+  - { id: finish, label: 5. Finish, detail: "Run success or failed", icon: "lucide:flag", link: "../flows/schedule.md#runs-complete" }
+edges:
+  - { from: define, to: start }
+  - { from: start, to: schedule }
+  - { from: schedule, to: execute }
+  - { from: execute, to: schedule, label: "next ready Task, or a retry" }
+  - { from: execute, to: finish, label: every Task ended }

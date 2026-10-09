@@ -1,0 +1,30 @@
+[package]
+name = "czar-store-file"
+version.workspace = true
+edition.workspace = true
+description = "File-backed state storage for Czar"
+readme = "README.md"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+keywords = ["workflow", "orchestration", "database", "file"]
+categories = ["database", "development-tools"]
+
+[lib]
+name = "czar_store_file"
+
+[dependencies]
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+chrono = { workspace = true, default-features = false, features = ["clock", "serde"] }
+czar-core = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+tokio = { workspace = true, features = ["fs"] }
+uuid = { workspace = true, features = ["v4"] }
+
+[lints]
+workspace = true

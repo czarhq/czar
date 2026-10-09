@@ -1,0 +1,39 @@
+name: container_first_class
+description: First-class local container task with upstream bindings and task output
+
+types:
+  Greeting:
+    subject: str
+  ContainerResult:
+    subject: str
+    task: str
+    env: str
+
+tasks:
+  prepare_subject:
+    executor: process
+    command: sh
+    args:
+      - -c
+      - |
+        printf 'CZAR_OUTPUT: {"subject":"container"}\n'
+    output_type: types.Greeting
+
+  greet_from_container:
+    executor: container
+    image: alpine:3.20
+    depends_on: [prepare_subject]
+    env:
+      DEMO_MODE: local-container
+    input_type:
+      greeting: types.Greeting
+    output_type: types.ContainerResult
+    inputs:
+      greeting:
+        ref: tasks.prepare_subject.output
+    command: sh
+    args:
+      - -c
+      - |
+        echo "container input: $CZAR_INPUT_JSON"
+        printf 'CZAR_OUTPUT: {"subject":"container","task":"%s","env":"%s"}\n' "$CZAR_TASK_NAME" "$DEMO_MODE"
