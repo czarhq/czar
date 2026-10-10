@@ -55,7 +55,7 @@ The second shows the entities that change while a Run goes on. The Scheduler wri
 ## Migrations
 
 - Postgres and SQLite each have their own numbered history, applied by `sqlx::migrate!`: [migrations](../../../crates/czar-store-postgres/migrations/) and [migrations_sqlite](../../../crates/czar-store-sqlite/migrations_sqlite/). D1 has one file, [001_init.sql](../../../crates/czar-store-d1/migrations/001_init.sql), applied by its own runner that records names in `__czar_d1_migrations`. The file backend only creates its directories.
-- Only `czar init`, `czar serve` (and `czar dev`) and `czar-web` run migrations. Every other command expects the schema to exist, so run `czar init` or start the server once against a new Store.
+- `czar init`, `czar serve` (and `czar dev`), `czar-web`, and the CLI commands that write (`czar run`, `czar workflow`, `czar trigger`, `czar load`, `czar delete-workflow`) run migrations first. The read-only commands (`status`, `tasks`, `logs`, `list-workflows`) expect the schema to exist, so on a new Store they fail until one of those has run.
 
 ## Failure and edge cases
 
