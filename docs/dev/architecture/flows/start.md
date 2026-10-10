@@ -76,7 +76,7 @@ A selection narrows a Run to some of the Snapshot's tasks. It is stored on the R
 ### Schedules
 
 - The Scheduler checks for due Workflows at most every 30 seconds: `schedule_enabled`, a `schedule`, and `next_scheduled_at` unset or in the past. It creates one Run each and stores the next time.
-- A schedule is a `cron` crate expression: six or seven fields with seconds first (`0 0 2 * * *` is 02:00 daily), or a shorthand such as `@daily`. Times are UTC. Five-field crontab lines never fire: [known-issues.md](../known-issues.md#five-field-cron-expressions-never-fire).
+- A schedule is a cron expression, parsed with the `croner` crate: five fields (`0 2 * * *` is 02:00 daily), optionally with seconds in front (`0 0 2 * * *`), or a shorthand such as `@daily`. Weekday 0 and 7 are Sunday. Times are UTC.
 - `schedule_enabled` starts false. Only `czar workflow deploy`, `czar workflow update --schedule-enabled true` and `PATCH /api/workflows/{name}/schedule` turn it on ([define.md](define.md#rules)).
 - Changing or re-enabling a schedule does not reset `next_scheduled_at`; a time in the past fires once at the next check.
 - Downtime is not backfilled: a missed slot fires once, at the next check.
@@ -87,7 +87,7 @@ A selection narrows a Run to some of the Snapshot's tasks. It is stored on the R
 - **Unknown Workflow** is a CLI error or HTTP 404. **Unknown flow, task or group** is a CLI error or HTTP 400; nothing is stored.
 - **A Workflow without a stored YAML** (applied before Snapshots kept it) cannot start a flow or a selection, and `POST /api/runs` answers 400 "re-apply the workflow definition".
 - **`POST /api/runs` validates strictly,** so a Workflow applied relaxed (worker sync, or `validation.enabled: false`) can be refused here.
-- **An invalid cron expression** is logged on every check and never creates a Run.
+- **An invalid cron expression,** or one that never matches (February 30th), is logged on every check and never creates a Run.
 - **`czar run FILE` with another Scheduler running:** it waits about one second to see whether the other Scheduler takes the Run; see [building-blocks.md](../building-blocks.md#processes-in-a-deployment).
 
 ## In the code
